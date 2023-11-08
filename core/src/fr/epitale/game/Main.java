@@ -11,6 +11,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Main extends ApplicationAdapter {
 	OrthographicCamera camera;
@@ -66,7 +68,30 @@ public class Main extends ApplicationAdapter {
 		float newX = character.getX() + deltaX;
 		float newY = character.getY() + deltaY;
 
-		if (newX >= 0 && newX + 16 <= tiledMap.getProperties().get("width", Integer.class) * 16 && newY >= 0 && newY + 16 <= tiledMap.getProperties().get("height", Integer.class) * 16) {
+		int mapWidth = tiledMap.getProperties().get("width", Integer.class) * 16;
+		int mapHeight = tiledMap.getProperties().get("height", Integer.class) * 16;
+
+
+		for (int row = 0; row < mapHeight; row++) {
+			for (int col = 0; col < mapWidth; col++) {
+				TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
+
+				if (cell != null) {
+					Rectangle tileBounds = new Rectangle(col, mapHeight - row - 16, 16, 16);
+
+					if (newX < tileBounds.x + tileBounds.width - 16 && newX + 16 > tileBounds.x &&
+							newY < tileBounds.y - 16 + tileBounds.height && newY + 16 > tileBounds.y) {
+						deltaX = 0;
+						deltaY = 0;
+					}
+				}
+			}
+		}
+
+		float characterX = character.getX() + deltaX;
+		float characterY = character.getY() + deltaY;
+
+		if (characterX >= 0 && characterX + 16 <= mapWidth && characterY >= 0 && characterY + 16 <= mapHeight) {
 			character.move(deltaX, deltaY);
 		}
 
