@@ -77,6 +77,9 @@ public class Main extends Game {
 		int mapWidth = tiledMap.getProperties().get("width", Integer.class) * 16;
 		int mapHeight = tiledMap.getProperties().get("height", Integer.class) * 16;
 
+		boolean characterVisible = true;
+
+
 		for (int row = 0; row < mapHeight; row++) {
 			for (int col = 0; col < mapWidth; col++) {
 				TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16,
@@ -90,6 +93,24 @@ public class Main extends Game {
 						deltaX = 0;
 						deltaY = 0;
 					}
+				}
+			}
+		}
+
+		for (int row = 0; row < mapHeight; row += 16) {
+			for (int col = 0; col < mapWidth; col += 16) {
+				TiledMapTileLayer tunnelsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("tunnels");
+
+				int characterTileX = (int) (newX / 16);
+				int characterTileY = (int) ((mapHeight - newY - 16) / 16);
+				int cellCol = characterTileX * 16 / 16;  // Indice de colonne dans la couche "tunnels"
+				int cellRow = (mapHeight - characterTileY * 16) / 16 - 1;  // Indice de ligne dans la couche "tunnels"
+
+				TiledMapTileLayer.Cell cell = tunnelsLayer.getCell(cellCol, cellRow);
+
+				if (cell != null) {
+					characterVisible = false;
+					break;
 				}
 			}
 		}
@@ -109,7 +130,11 @@ public class Main extends Game {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+
+		if (characterVisible) {
+			batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+		}
+
 		batch.end();
 	}
 
