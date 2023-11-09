@@ -7,6 +7,10 @@ public class Main extends Game {
 
 	@Override
 	public void create() {
-		setScreen(new Epitale(this));
+    batch = new SpriteBatch();
+		background.create();
+		this.setScreen(new MenuScreen(this, background));
+		//setScreen(new Epitale(this));
+
 	}
 }
