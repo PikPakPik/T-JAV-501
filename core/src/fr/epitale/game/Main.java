@@ -1,6 +1,6 @@
 package fr.epitale.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
@@ -13,15 +13,16 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import fr.epitale.game.MiniGame.JAPE.JAPEScreen;
 
-public class Main extends ApplicationAdapter {
-	OrthographicCamera camera;
-	TiledMap tiledMap;
-	TiledMapRenderer tiledMapRenderer;
+public class Main extends Game {
+	public OrthographicCamera camera;
+	public TiledMap tiledMap;
+	public TiledMapRenderer tiledMapRenderer;
 
-	Character character;
-	Texture characterTexture;
-	SpriteBatch batch;
+	public Character character;
+	public Texture characterTexture;
+	public SpriteBatch batch;
 	float zoomFactor = 0.3f;
 
 	@Override
@@ -75,6 +76,7 @@ public class Main extends ApplicationAdapter {
 		for (int row = 0; row < mapHeight; row++) {
 			for (int col = 0; col < mapWidth; col++) {
 				TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
+				TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("JAPE");
 
 				if (cell != null) {
 					Rectangle tileBounds = new Rectangle(col, mapHeight - row - 16, 16, 16);
@@ -83,6 +85,14 @@ public class Main extends ApplicationAdapter {
 							newY < tileBounds.y - 16 + tileBounds.height && newY + 16 > tileBounds.y) {
 						deltaX = 0;
 						deltaY = 0;
+					}
+				}
+
+				if (japeLayer != null) {
+					TiledMapTileLayer.Cell cellJAPE = japeLayer.getCell((int) (character.getX() / 16), (int) (character.getY() / 16));
+					if (cellJAPE != null) {
+						this.setScreen(new JAPEScreen(this));
+						return;
 					}
 				}
 			}
