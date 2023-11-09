@@ -5,12 +5,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import fr.epitale.game.Main;
+import fr.epitale.game.Map.Epitale;
 
 public class JAPEScreen implements Screen {
-    final Main game;
+    final Epitale game;
     private OrthographicCamera camera;
 
-    public JAPEScreen(final Main game) {
+    public JAPEScreen(final Epitale game) {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
