@@ -27,6 +27,7 @@ public class Main extends Game {
 	Texture characterTexture;
 	SpriteBatch batch;
 	float zoomFactor = 0.3f;
+	Background background = new Background();
 
 	@Override
 	public void create() {
@@ -47,7 +48,8 @@ public class Main extends Game {
 
 		// characterTexture = new Texture("tiles/tile_0085.png");
 		batch = new SpriteBatch();
-		this.setScreen(new MenuScreen(this));
+		background.create();
+		this.setScreen(new MenuScreen(this, background));
 	}
 
 	// @Override
