@@ -1,6 +1,7 @@
 package fr.epitale.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input.Keys;
@@ -13,8 +14,11 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.ScreenAdapter;
 
-public class Main extends ApplicationAdapter {
+public class Main extends Game {
+	public static final int WIDTH = 1280;
+	public static final int HEIGHT = 720;
 	OrthographicCamera camera;
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
@@ -26,26 +30,28 @@ public class Main extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		int windowWidth = 1280;
-		int windowHeight = 1280;
+		// int windowWidth = 1280;
+		// int windowHeight = 1280;
 
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, windowWidth * zoomFactor, windowHeight * zoomFactor); // Appliquer le zoom ici
-		camera.update();
+		// camera = new OrthographicCamera();
+		// camera.setToOrtho(false, windowWidth * zoomFactor, windowHeight *
+		// zoomFactor); // Appliquer le zoom ici
+		// camera.update();
 
-		Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
+		// Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
 
-		tiledMap = new TmxMapLoader().load("epitales-map.tmx");
-		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+		// tiledMap = new TmxMapLoader().load("epitales-map.tmx");
+		// tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-		character = new Character(34*16, 3*16);
+		// character = new Character(34*16, 3*16);
 
-		characterTexture = new Texture("tiles/tile_0085.png");
+		// characterTexture = new Texture("tiles/tile_0085.png");
 		batch = new SpriteBatch();
+		this.setScreen(new MenuScreen(this));
 	}
 
-	@Override
-	public void render() {
+	// @Override
+	public void rendher() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -71,10 +77,10 @@ public class Main extends ApplicationAdapter {
 		int mapWidth = tiledMap.getProperties().get("width", Integer.class) * 16;
 		int mapHeight = tiledMap.getProperties().get("height", Integer.class) * 16;
 
-
 		for (int row = 0; row < mapHeight; row++) {
 			for (int col = 0; col < mapWidth; col++) {
-				TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
+				TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16,
+						(mapHeight - row - 16) / 16);
 
 				if (cell != null) {
 					Rectangle tileBounds = new Rectangle(col, mapHeight - row - 16, 16, 16);
@@ -106,7 +112,6 @@ public class Main extends ApplicationAdapter {
 		batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
 		batch.end();
 	}
-
 
 	@Override
 	public void dispose() {
