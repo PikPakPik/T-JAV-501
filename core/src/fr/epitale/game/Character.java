@@ -8,7 +8,7 @@ public class Character {
     public Character(float initialX, float initialY) {
         x = initialX;
         y = initialY;
-        speed = 1;
+        speed = 1.5f;
     }
 
     public void move(float deltaX, float deltaY) {
