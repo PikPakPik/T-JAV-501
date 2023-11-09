@@ -2,6 +2,7 @@ package fr.epitale.game.Map;
 public class Character {
     private float x;
     private float y;
+    private boolean isVisible = true;
 
     private float speed;
 
@@ -33,6 +34,18 @@ public class Character {
 
     public void setY(float newY) {
         y = newY;
+    }
+
+    public void setSpeed(float newSpeed) {
+        speed = newSpeed;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean newVisible) {
+        isVisible = newVisible;
     }
 
 }
