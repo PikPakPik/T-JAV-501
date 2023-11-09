@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.kotcrab.vis.ui.widget.Menu;
 
 public class Background implements ApplicationListener {
 
     // Constant rows and columns of the sprite sheet
-    private static final int FRAME_COLS = 5, FRAME_ROWS = 61;
-
+    private static final int FRAME_COLS = 5, FRAME_ROWS = 52;
     // Objects used
     Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
     Texture walkSheet;
@@ -40,6 +40,7 @@ public class Background implements ApplicationListener {
         int index = 0;
         for (int i = 0; i < FRAME_ROWS; i++) {
             for (int j = 0; j < FRAME_COLS; j++) {
+
                 walkFrames[index++] = tmp[i][j];
             }
         }
@@ -59,9 +60,10 @@ public class Background implements ApplicationListener {
         stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 
         // Get current frame of animation for the current stateTime
-        TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
+        TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, false);
         spriteBatch.begin();
-        spriteBatch.draw(currentFrame, 0, 0); // Draw current frame at (50, 50)
+        spriteBatch.draw(currentFrame, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Draw current frame
+                                                                                                 // at (50, 50)
         spriteBatch.end();
     }
 
