@@ -6,38 +6,29 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
 
 public class SpaceInvScreen implements Screen {
 
-    protected OrthographicCamera camera;
-    protected SpriteBatch batch;
-
-    protected Texture playerShip;
-    protected Rectangle playerRect;
-
-    protected Array<Enemy> enemies;
-
-    private static final int ENEMY_ROWS = 5;
-    private static final int ENEMY_COLS = 10;
-    private static final float ENEMY_SPACING = 50;
+    private final OrthographicCamera camera;
+    private final SpriteBatch batch;
+    private final Player player;
+    private final Array<Enemy> enemies;
+    private boolean moveEnemiesRight = true;
 
     public SpaceInvScreen(final Main game) {
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
 
-        playerShip = new Texture("tiles/tile_0085.png");
-        playerRect = new Rectangle(800 / 2 - 64 / 2, 20, 64, 64);
-
+        player = new Player();
         enemies = new Array<>();
 
-        for (int row = 0; row < ENEMY_ROWS; row++) {
-            for (int col = 0; col < ENEMY_COLS; col++) {
-                Enemy enemy = new Enemy(col * ENEMY_SPACING, 600 - (row * ENEMY_SPACING));
+        for (int row = 0; row < Enemy.ENEMY_ROWS; row++) {
+            for (int col = 0; col < Enemy.ENEMY_COLS; col++) {
+                Enemy enemy = new Enemy(col * Enemy.ENEMY_SPACING, 600 - (row * Enemy.ENEMY_SPACING));
                 enemies.add(enemy);
             }
         }
@@ -51,7 +42,6 @@ public class SpaceInvScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
-        movePlayer();
         moveEnemies();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -61,63 +51,72 @@ public class SpaceInvScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        batch.draw(playerShip, playerRect.x, playerRect.y);
+        player.render(batch);
         for (Enemy enemy : enemies) {
-            batch.draw(enemy.texture, enemy.rect.x, enemy.rect.y);
+            enemy.render(batch);
         }
+        player.movePlayerProjs();
+        player.shoot();
+        player.renderPlayerProjs(batch);
         batch.end();
     }
 
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            playerRect.x -= 200 * Gdx.graphics.getDeltaTime();
+            player.moveLeft();
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            playerRect.x += 200 * Gdx.graphics.getDeltaTime();
-        }
-    }
-
-    private void movePlayer() {
-        if (playerRect.x < 0) {
-            playerRect.x = 0;
-        }
-        if (playerRect.x > 800 - 64) {
-            playerRect.x = 800 - 64;
+            player.moveRight();
         }
     }
 
     private void moveEnemies() {
         for (Enemy enemy : enemies) {
-            enemy.move();
+            enemy.move(moveEnemiesRight);
         }
+
+        if (ChangeEnemiesDirection()) {
+            for (Enemy enemy : enemies) {
+                enemy.moveDown();
+            }
+            moveEnemiesRight = !moveEnemiesRight;
+        }
+    }
+
+    private boolean ChangeEnemiesDirection() {
+        for (Enemy enemy : enemies) {
+            float enemyX = enemy.rect.x;
+            float enemyWidth = enemy.rect.width;
+
+            if (enemyX <= 0 && moveEnemiesRight || (enemyX + enemyWidth) >= 800 && !moveEnemiesRight) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
-        playerShip.dispose();
+        player.dispose();
+        player.disposePlayerProjs();
         for (Enemy enemy : enemies) {
-            enemy.texture.dispose();
+            enemy.dispose();
         }
     }
-
 }
