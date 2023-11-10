@@ -3,7 +3,6 @@ public class Character {
     private float x;
     private float y;
     private boolean isVisible = true;
-
     private float speed;
 
     public Character(float initialX, float initialY) {

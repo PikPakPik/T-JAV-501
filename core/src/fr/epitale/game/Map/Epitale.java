@@ -97,7 +97,7 @@ public class Epitale implements Screen {
                 if (japeLayer != null) {
                     TiledMapTileLayer.Cell cellJAPE = japeLayer.getCell((int) (character.getX() / 16), (int) (character.getY() / 16));
                     if (cellJAPE != null) {
-                        game.setScreen(new JAPEScreen(this));
+                        game.setScreen(new JAPEScreen(game));
                         return;
                     }
                 }
