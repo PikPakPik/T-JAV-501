@@ -6,21 +6,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 
-public class PlayerProj {
+public class EnemyProj {
     protected Texture texture;
     protected Rectangle rect;
-    protected float speed = 200;
+    protected float speed = 300;
 
-    public PlayerProj(float x, float y) {
-        texture = new Texture("Tiles/tile_0104.png");
+    public EnemyProj(float x, float y) {
+        texture = new Texture("Tiles/tile_0130.png");
         rect = new Rectangle(x, y, 16, 16);
     }
 
     public void move() {
-        rect.y += speed * Gdx.graphics.getDeltaTime();
-    }
-    public boolean collidesWith(Enemy enemy) {
-        return this.rect.overlaps(enemy.rect);
+        rect.y -= speed * Gdx.graphics.getDeltaTime();
     }
 
     public void render(SpriteBatch batch) {
@@ -30,5 +27,4 @@ public class PlayerProj {
     public void dispose() {
         texture.dispose();
     }
-
 }

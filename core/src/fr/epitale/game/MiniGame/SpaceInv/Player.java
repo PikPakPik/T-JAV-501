@@ -11,7 +11,7 @@ public class Player {
 
     private final Texture texture;
     private final Rectangle rect;
-    private final Array<PlayerProj> playerProjs;
+    protected final Array<PlayerProj> playerProjs;
 
     public Player() {
         texture = new Texture("Tiles/tile_0085.png");
@@ -38,17 +38,9 @@ public class Player {
         }
     }
 
-    public void render(SpriteBatch batch) {
-        batch.draw(texture, rect.x, rect.y);
-    }
-
-    public void dispose() {
-        texture.dispose();
-    }
-
     public void shoot() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            PlayerProj playerProj = new PlayerProj(rect.x + rect.width / 2 - 4, rect.y + rect.height);
+            PlayerProj playerProj = new PlayerProj(rect.x, rect.y);
             playerProjs.add(playerProj);
         }
     }
@@ -77,4 +69,13 @@ public class Player {
             playerProj.dispose();
         }
     }
+
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, rect.x, rect.y);
+    }
+
+    public void dispose() {
+        texture.dispose();
+    }
+
 }

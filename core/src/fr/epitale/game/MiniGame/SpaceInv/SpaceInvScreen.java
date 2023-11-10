@@ -54,10 +54,13 @@ public class SpaceInvScreen implements Screen {
         player.render(batch);
         for (Enemy enemy : enemies) {
             enemy.render(batch);
+            enemy.moveProjs();
+            enemy.move(moveEnemiesRight, Gdx.graphics.getDeltaTime());
         }
         player.movePlayerProjs();
         player.shoot();
         player.renderPlayerProjs(batch);
+        checkCollisions();
         batch.end();
     }
 
@@ -71,10 +74,6 @@ public class SpaceInvScreen implements Screen {
     }
 
     private void moveEnemies() {
-        for (Enemy enemy : enemies) {
-            enemy.move(moveEnemiesRight);
-        }
-
         if (ChangeEnemiesDirection()) {
             for (Enemy enemy : enemies) {
                 enemy.moveDown();
@@ -93,6 +92,16 @@ public class SpaceInvScreen implements Screen {
             }
         }
         return false;
+    }
+    private void checkCollisions() {
+        for (PlayerProj playerProj : player.playerProjs) {
+            for (Enemy enemy : enemies) {
+                if (playerProj.collidesWith(enemy)) {
+                    player.playerProjs.removeValue(playerProj, true);
+                    enemies.removeValue(enemy, true);
+                }
+            }
+        }
     }
 
     @Override
