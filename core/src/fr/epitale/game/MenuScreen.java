@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import fr.epitale.game.Map.Epitale;
+
 public class MenuScreen implements Screen {
     // private static final int FRAME_COLS = 5, FRAME_ROWS = 61;
     private static final int EXIT_BUTTON_WIDTH = 250;
@@ -32,50 +34,14 @@ public class MenuScreen implements Screen {
     Texture logo;
     Texture playButton;
     Texture exitButton;
-    Background Background;
+    Background background;
     private Stage stage;
     private OrthographicCamera camera;
-
-    // A variable for tracking elapsed time for the animation
-    // float stateTime;
-
-    // private void createBGAnimation() {
-    // // Load the sprite sheet as a Texture
-    // walkSheet = new Texture(Gdx.files.internal("Menu/BG_Sheet.png"));
-
-    // // Use the split utility method to create a 2D array of TextureRegions. This
-    // is
-    // // possible because this sprite sheet contains frames of equal size and they
-    // are
-    // // all aligned.
-    // TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-    // walkSheet.getWidth() / FRAME_COLS,
-    // walkSheet.getHeight() / FRAME_ROWS);
-
-    // // Place the regions into a 1D array in the correct order, starting from the
-    // top
-    // // left, going across first. The Animation constructor requires a 1D array.
-    // TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-    // int index = 0;
-    // for (int i = 0; i < FRAME_ROWS; i++) {
-    // for (int j = 0; j < FRAME_COLS; j++) {
-    // walkFrames[index++] = tmp[i][j];
-    // }
-    // }
-
-    // // Initialize the Animation with the frame interval and array of frames
-    // walkAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
-
-    // // Instantiate a SpriteBatch for drawing and reset the elapsed animation
-    // // time to 0
-    // stateTime = 0f;
-    // }
 
     public MenuScreen(final Main game, final Background background) {
         this.game = game;
 
-        Background = background;
-        Background.create();
+        this.background = background;
         // createBGAnimation();
         logo = new Texture("Menu/Game_Logo.png");
         playButton = new Texture("Menu/play_Button.png");
@@ -97,7 +63,7 @@ public class MenuScreen implements Screen {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // setScreen(new Epitale());
+                game.setScreen(new Epitale(game));
                 dispose();
             }
         });
@@ -115,13 +81,8 @@ public class MenuScreen implements Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        // stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation
-        // time
-        // TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, true);
         game.batch.begin();
-
-        // game.batch.draw(currentFrame, 10, 10); // Draw current frame at (0, 0)
-        Background.render();
+        background.render();
         game.batch
                 .draw(logo, (game.WIDTH
                         / 2 - this.LOGO_WIDTH / 2), game.HEIGHT - 300,
