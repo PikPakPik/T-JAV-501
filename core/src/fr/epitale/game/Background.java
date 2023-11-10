@@ -15,6 +15,7 @@ public class Background implements ApplicationListener {
     Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
     Texture walkSheet;
     SpriteBatch spriteBatch;
+    protected boolean lastFrame = false;
 
     float stateTime;
 
@@ -31,11 +32,10 @@ public class Background implements ApplicationListener {
         int index = 0;
         for (int i = 0; i < FRAME_ROWS; i++) {
             for (int j = 0; j < FRAME_COLS; j++) {
-
                 walkFrames[index++] = tmp[i][j];
+
             }
         }
-
         walkAnimation = new Animation<TextureRegion>(0.025f, walkFrames);
 
         spriteBatch = new SpriteBatch();
@@ -50,6 +50,9 @@ public class Background implements ApplicationListener {
         TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime, false);
         spriteBatch.begin();
         spriteBatch.draw(currentFrame, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Draw current frame
+        if (currentFrame == walkAnimation.getKeyFrames()[FRAME_COLS * FRAME_ROWS - 1]) {
+            this.lastFrame = true;
+        }
         spriteBatch.end();
     }
 
