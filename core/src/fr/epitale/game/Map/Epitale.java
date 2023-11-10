@@ -1,49 +1,36 @@
 package fr.epitale.game.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import fr.epitale.game.Main;
-import fr.epitale.game.MiniGame.JAPE.JAPEScreen;
 
 
-public class Epitale implements Screen {
+public class Epitale extends ScreenAdapter {
 
     final Main game;
     public OrthographicCamera camera;
-    public TiledMap tiledMap;
-    public TiledMapRenderer tiledMapRenderer;
+    public Map tiledMap;
 
     public Character character;
     public Texture characterTexture;
     public SpriteBatch batch;
-    float zoomFactor = 0.3f;
 
     public Epitale(final Main game) {
-        int windowWidth = 1280;
-        int windowHeight = 1280;
         this.game = game;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, windowWidth * zoomFactor, windowHeight * zoomFactor); // Appliquer le zoom ici
-        camera.update();
-        Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
+        Gdx.graphics.setWindowedMode(1280, 720);
     }
 
     @Override
     public void show() {
 
-        tiledMap = new TmxMapLoader().load("epitales-map.tmx");
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        tiledMap = new EpitaleMap();
 
         character = new Character(34*16, 3*16);
 
@@ -75,14 +62,14 @@ public class Epitale implements Screen {
         float newX = character.getX() + deltaX;
         float newY = character.getY() + deltaY;
 
-        int mapWidth = tiledMap.getProperties().get("width", Integer.class) * 16;
-        int mapHeight = tiledMap.getProperties().get("height", Integer.class) * 16;
+        int mapWidth = tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
+        int mapHeight = tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
         boolean characterVisible = true;
 
         for (int row = 0; row < mapHeight; row++) {
             for (int col = 0; col < mapWidth; col++) {
-                TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
-                TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("JAPE");
+                TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
+                TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("JAPE");
 
                 if (cell != null) {
                     Rectangle tileBounds = new Rectangle(col, mapHeight - row - 16, 16, 16);
@@ -97,7 +84,9 @@ public class Epitale implements Screen {
                 if (japeLayer != null) {
                     TiledMapTileLayer.Cell cellJAPE = japeLayer.getCell((int) (character.getX() / 16), (int) (character.getY() / 16));
                     if (cellJAPE != null) {
-                        game.setScreen(new JAPEScreen(game));
+                        tiledMap = new JAPEMap();
+                        character.setX(36*16);
+                        character.setY(0);
                         return;
                     }
                 }
@@ -106,7 +95,7 @@ public class Epitale implements Screen {
 
         for (int row = 0; row < mapHeight; row += 16) {
             for (int col = 0; col < mapWidth; col += 16) {
-                TiledMapTileLayer tunnelsLayer = (TiledMapTileLayer) tiledMap.getLayers().get("tunnels");
+                TiledMapTileLayer tunnelsLayer = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("tunnels");
 
                 int characterTileX = (int) (newX / 16);
                 int characterTileY = (int) ((mapHeight - newY - 16) / 16);
@@ -129,13 +118,12 @@ public class Epitale implements Screen {
             character.move(deltaX, deltaY);
         }
 
-        camera.position.set(character.getX(), character.getY(), 0);
-        camera.update();
+        tiledMap.moveCamera(character);
 
-        tiledMapRenderer.setView(camera);
-        tiledMapRenderer.render();
+        tiledMap.tiledMapRenderer.setView(tiledMap.camera);
+        tiledMap.tiledMapRenderer.render();
 
-        batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(tiledMap.camera.combined);
         batch.begin();
 
         if (characterVisible) {

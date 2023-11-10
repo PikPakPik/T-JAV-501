@@ -18,7 +18,5 @@ public class Main extends Game {
 		background = new Background();
 		background.create();
 		this.setScreen(new MenuScreen(this, background));
-		// setScreen(new Epitale(this));
-
 	}
 }
