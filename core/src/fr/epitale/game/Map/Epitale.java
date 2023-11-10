@@ -40,9 +40,28 @@ public class Epitale extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        handleInput();
+        updateCharacterPosition(0, 0);
+
+        tiledMap.moveCamera(character);
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        tiledMap.tiledMapRenderer.setView(tiledMap.camera);
+        tiledMap.tiledMapRenderer.render();
+
+        batch.setProjectionMatrix(tiledMap.camera.combined);
+        batch.begin();
+
+        if (isCharacterVisible()) {
+            batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+        }
+
+        batch.end();
+    }
+
+    private void handleInput() {
         float deltaX = 0;
         float deltaY = 0;
 
@@ -59,79 +78,68 @@ public class Epitale extends ScreenAdapter {
             deltaY = -character.getSpeed();
         }
 
+        updateCharacterPosition(deltaX, deltaY);
+    }
+
+    private void updateCharacterPosition(float deltaX, float deltaY) {
         float newX = character.getX() + deltaX;
         float newY = character.getY() + deltaY;
 
+        // Vérifiez les collisions ici et ajustez newX, newY si nécessaire
+
+        if (isValidMove(newX, newY)) {
+            character.setX(newX);
+            character.setY(newY);
+        }
+    }
+
+    private boolean isValidMove(float newX, float newY) {
         int mapWidth = tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
         int mapHeight = tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
-        boolean characterVisible = true;
 
-        for (int row = 0; row < mapHeight; row++) {
-            for (int col = 0; col < mapWidth; col++) {
-                TiledMapTileLayer.Cell cell = ((TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("walls")).getCell(col / 16, (mapHeight - row - 16) / 16);
-                TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("JAPE");
+        // Vérification des limites de la carte
+        if (newX < 0 || newX + 16 > mapWidth || newY < 0 || newY + 16 > mapHeight) {
+            return false;
+        }
 
+        TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("walls");
+
+        // Convertir les coordonnées du monde en coordonnées de la couche de tuiles
+        int fromX = (int) (newX / 16);
+        int toX = (int) ((newX + 16) / 16);
+        int fromY = (int) (newY / 16);
+        int toY = (int) ((newY + 16) / 16);
+
+        // Vérifier la collision avec la couche de murs
+        for (int x = fromX; x <= toX; x++) {
+            for (int y = fromY; y <= toY; y++) {
+                TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
                 if (cell != null) {
-                    Rectangle tileBounds = new Rectangle(col, mapHeight - row - 16, 16, 16);
-
-                    if (newX < tileBounds.x + tileBounds.width - 16 && newX + 16 > tileBounds.x &&
-                            newY < tileBounds.y - 16 + tileBounds.height && newY + 16 > tileBounds.y) {
-                        deltaX = 0;
-                        deltaY = 0;
-                    }
-                }
-
-                if (japeLayer != null) {
-                    TiledMapTileLayer.Cell cellJAPE = japeLayer.getCell((int) (character.getX() / 16), (int) (character.getY() / 16));
-                    if (cellJAPE != null) {
-                        tiledMap = new JAPEMap();
-                        character.setX(36*16);
-                        character.setY(0);
-                        return;
-                    }
+                    return false;  // Collision détectée
                 }
             }
         }
 
-        for (int row = 0; row < mapHeight; row += 16) {
-            for (int col = 0; col < mapWidth; col += 16) {
-                TiledMapTileLayer tunnelsLayer = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("tunnels");
-
-                int characterTileX = (int) (newX / 16);
-                int characterTileY = (int) ((mapHeight - newY - 16) / 16);
-                int cellCol = characterTileX * 16 / 16;  // Indice de colonne dans la couche "tunnels"
-                int cellRow = (mapHeight - characterTileY * 16) / 16 - 1;  // Indice de ligne dans la couche "tunnels"
-
-                TiledMapTileLayer.Cell cell = tunnelsLayer.getCell(cellCol, cellRow);
-
-                if (cell != null) {
-                    characterVisible = false;
-                    break;
-                }
-            }
-        }
-
-        float characterX = character.getX() + deltaX;
-        float characterY = character.getY() + deltaY;
-
-        if (characterX >= 0 && characterX + 16 <= mapWidth && characterY >= 0 && characterY + 16 <= mapHeight) {
-            character.move(deltaX, deltaY);
-        }
-
-        tiledMap.moveCamera(character);
-
-        tiledMap.tiledMapRenderer.setView(tiledMap.camera);
-        tiledMap.tiledMapRenderer.render();
-
-        batch.setProjectionMatrix(tiledMap.camera.combined);
-        batch.begin();
-
-        if (characterVisible) {
-            batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-        }
-
-        batch.end();
+        return true;  // Aucune collision détectée
     }
+
+
+
+
+
+    private boolean isCharacterVisible() {
+        TiledMapTileLayer layerTunnel = (TiledMapTileLayer) tiledMap.tiledMap.getLayers().get("tunnels");
+
+        TiledMapTileLayer.Cell cellTunnel = layerTunnel.getCell((int) (character.getX() / layerTunnel.getTileWidth()), (int) (character.getY() / layerTunnel.getTileHeight()));
+
+        if (cellTunnel != null) {
+            Object property = cellTunnel.getTile().getProperties().get("tunnel");
+            return property == null;
+        }
+
+        return true;
+    }
+
 
     @Override
     public void resize(int width, int height) {
