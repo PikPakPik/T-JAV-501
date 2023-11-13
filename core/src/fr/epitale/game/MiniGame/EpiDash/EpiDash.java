@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
+import fr.epitale.game.Main;
 import fr.epitale.game.Map.Epitale;
 
 public class EpiDash implements Screen {
     final Epitale game;
+
     private OrthographicCamera camera;
 
     public EpiDash(final Epitale game) {
@@ -21,7 +23,7 @@ public class EpiDash implements Screen {
     public void show() {
         game.tiledMap = new TmxMapLoader().load("EpitechDash.tmx");
         game.tiledMapRenderer = new OrthogonalTiledMapRenderer(game.tiledMap);
-        game.character.setX(39*16);
+        game.character.setX(39 * 16);
         game.character.setY(0);
     }
 

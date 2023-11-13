@@ -15,12 +15,11 @@ public class Main extends Game {
 
 	@Override
 	public void create() {
-		batch = new SpriteBatch();
+		// batch = new SpriteBatch();
 		// background = new Background();
 		// background.create();
 		// this.setScreen(new MenuScreen(this, background));
 		// setScreen(new Epitale(this));
-		this.setScreen(new EpiDash(this));
-
+		// setScreen(new EpiDash(this));
 	}
 }
