@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
 
 public class SpaceInvScreen implements Screen {
-    private Texture backgroundTexture;
+    protected Texture backgroundTexture;
     private final OrthographicCamera camera;
     private final SpriteBatch batch;
     private final Player player;
