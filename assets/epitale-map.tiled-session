@@ -9,11 +9,11 @@
     ],
     "fileStates": {
         "epitales-map.tmx": {
-            "scale": 1.5,
-            "selectedLayer": -1,
+            "scale": 1,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 848.3333333333333,
-                "y": 215.33333333333334
+                "x": 632.5,
+                "y": 436
             }
         },
         "epitales_tiles.tsx": {
