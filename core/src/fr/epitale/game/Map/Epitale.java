@@ -4,31 +4,36 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Rectangle;
 import fr.epitale.game.Main;
 
 public class Epitale extends ScreenAdapter {
 
-  final Main game;
-  public OrthographicCamera camera;
-  public Map tiledMap;
+  private static final int WINDOW_WIDTH = 1280;
+  private static final int WINDOW_HEIGHT = 720;
 
-  public Character character;
-  public Texture characterTexture;
-  public SpriteBatch batch;
+  private final Main game;
+  private Map tiledMap;
+
+  public static Character character;
+  private Texture characterTexture;
+  private SpriteBatch batch;
 
   public Epitale(final Main game) {
     this.game = game;
-    Gdx.graphics.setWindowedMode(1280, 720);
+    setWindowMode();
   }
+
+  private void setWindowMode() {
+    Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+  }
+
 
   @Override
   public void show() {
-    tiledMap = new EpitaleMap();
+    tiledMap = new EpitaleMap(character);
 
     character = new Character(34 * 16, 3 * 16);
 
@@ -41,7 +46,7 @@ public class Epitale extends ScreenAdapter {
     handleInput();
     updateCharacterPosition(0, 0);
 
-    tiledMap.moveCamera(character);
+    tiledMap.moveCamera();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -107,7 +112,7 @@ public class Epitale extends ScreenAdapter {
       .get("walls");
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.tiledMap
       .getLayers()
-      .get("JAPE"); // Assurez-vous que le nom est correct
+      .get("JAPE");
 
     // Convertir les coordonnées du monde en coordonnées de la couche de tuiles
 
@@ -115,47 +120,48 @@ public class Epitale extends ScreenAdapter {
     int topLeftY = (int) ((newY + 14) / 16);
 
     int topRightX = (int) ((newX + 14) / 16);
-    int topRightY = topLeftY;
 
-    int bottomLeftX = topLeftX;
     int bottomLeftY = (int) (newY / 16);
 
-    int bottomRightX = topRightX;
-    int bottomRightY = bottomLeftY;
-
     // Vérifier la collision avec la couche de murs
-    if (isWall(wallLayer, topLeftX, topLeftY) ||
-        isWall(wallLayer, topRightX, topRightY) ||
-        isWall(wallLayer, bottomLeftX, bottomLeftY) ||
-        isWall(wallLayer, bottomRightX, bottomRightY)) {
+    if (
+      isWall(wallLayer, topLeftX, topLeftY) ||
+      isWall(wallLayer, topRightX, topLeftY) ||
+      isWall(wallLayer, topLeftX, bottomLeftY) ||
+      isWall(wallLayer, topRightX, bottomLeftY)
+    ) {
       return false;
     }
 
-    if(japeLayer == null) return true;
+    if (japeLayer == null) return true;
     // Vérifier la collision avec la couche JAPE
-    if (isJape(japeLayer, topLeftX, topLeftY) ||
-        isJape(japeLayer, topRightX, topRightY) ||
-        isJape(japeLayer, bottomLeftX, bottomLeftY) ||
-        isJape(japeLayer, bottomRightX, bottomRightY)) {
-      // Vous pouvez ajouter ici le code pour changer d'écran
-      tiledMap = new JAPEMap();
+    if (
+      isJape(japeLayer, topLeftX, topLeftY) ||
+      isJape(japeLayer, topRightX, topLeftY) ||
+      isJape(japeLayer, topLeftX, bottomLeftY) ||
+      isJape(japeLayer, topRightX, bottomLeftY)
+    ) {
+      // Changement de carte
+      //japeLayer.setVisible(false);
+      //japeLayer.setCell(topLeftX, topLeftY, null);
+      tiledMap = new JAPEMap(character);
       character.setX(36 * 16);
       character.setY(0 * 16);
       return false;
     }
 
     return true;
-}
+  }
 
-private boolean isWall(TiledMapTileLayer wallLayer, int x, int y) {
+  private boolean isWall(TiledMapTileLayer wallLayer, int x, int y) {
     TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
     return cell != null;
-}
+  }
 
-private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
+  private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
     TiledMapTileLayer.Cell cell = japeLayer.getCell(x, y);
     return cell != null;
-}
+  }
 
   private boolean isCharacterVisible() {
     TiledMapTileLayer layerTunnel = (TiledMapTileLayer) tiledMap.tiledMap
