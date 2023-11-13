@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class EnemyProj {
     protected Texture texture;
     protected Rectangle rect;
-    protected float speed = 50;
+    protected float speed = 300;
 
     public EnemyProj(float x, float y) {
         texture = new Texture("Tiles/tile_0130.png");
