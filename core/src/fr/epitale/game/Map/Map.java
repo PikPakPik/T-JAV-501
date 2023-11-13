@@ -3,64 +3,64 @@ package fr.epitale.game.Map;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public abstract class Map implements Screen {
-    protected OrthographicCamera camera;
-    protected TiledMap tiledMap;
-    protected TiledMapRenderer tiledMapRenderer;
-    float zoomFactor = 0.3f;
+  protected OrthographicCamera camera;
+  protected TiledMap tiledMap;
+  protected BatchTiledMapRenderer tiledMapRenderer;
+  float zoomFactor = 0.3f;
 
-    public Map(String map) {
-        int windowWidth = 1280;
-        int windowHeight = 720;
-        tiledMap = new TmxMapLoader().load(map);
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, windowWidth * zoomFactor, windowHeight * zoomFactor); // Appliquer le zoom ici
-        camera.update();
-    }
+  public Map(String map, Character character) {
+    int windowWidth = 1280;
+    int windowHeight = 720;
+    tiledMap = new TmxMapLoader().load(map);
+    tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+    camera = new OrthographicCamera();
+    camera.setToOrtho(
+      false,
+      windowWidth * zoomFactor,
+      windowHeight * zoomFactor
+    );
+    camera.update();
+  }
 
-    @Override
-    public void show() {
+  @Override
+  public void show() {}
 
-    }
+  public void updateZoomFactor(float zoomFactor) {
+    camera.setToOrtho(
+      false,
+      1280 * zoomFactor,
+      720 * zoomFactor
+    );
+  }
 
-    public void moveCamera(Character character) {
-        camera.position.set(character.getX(), character.getY(), 0);
-        camera.update();
-    }
+  public void moveCamera() {
+    camera.position.set(Epitale.character.getX(), Epitale.character.getY(), 0);
+    camera.update();
+  }
 
-    @Override
-    public void render(float delta) {
-        tiledMapRenderer.setView(camera);
-        tiledMapRenderer.render();
-    }
+  @Override
+  public void render(float delta) {
+    tiledMapRenderer.setView(camera);
+    tiledMapRenderer.render();
+  }
 
-    @Override
-    public void resize(int width, int height) {
+  @Override
+  public void resize(int width, int height) {}
 
-    }
+  @Override
+  public void pause() {}
 
-    @Override
-    public void pause() {
+  @Override
+  public void resume() {}
 
-    }
+  @Override
+  public void hide() {}
 
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
-    }
+  @Override
+  public void dispose() {}
 }
