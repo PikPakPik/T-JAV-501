@@ -9,17 +9,17 @@
     ],
     "fileStates": {
         "epitales-map.tmx": {
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 715.5,
-                "y": 490
+                "x": 848.3333333333333,
+                "y": 215.33333333333334
             }
         },
         "epitales_tiles.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 2,
-            "scaleInEditor": 1
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
         }
     },
     "last.imagePath": "C:/Users/Julie/OneDrive/Documents/EPITECH/2DgameProject/T-JAV-501-NAN_5/assets/Tiles",
