@@ -4,20 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -67,8 +60,8 @@ public class MenuScreen implements Screen {
         stylePlaybtn.imageUp = new TextureRegionDrawable(new TextureRegion(playButton));
 
         ImageButton myPlayBtn = new ImageButton(stylePlaybtn);
-        myPlayBtn.setPosition((game.WIDTH / 3 - this.PLAY_BUTTON_WIDTH / 2),
-                this.PLAY_BUTTON_Y);
+        myPlayBtn.setPosition((Main.WIDTH / 3 - MenuScreen.PLAY_BUTTON_WIDTH / 2),
+                MenuScreen.PLAY_BUTTON_Y);
         myPlayBtn.setSize(PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
         myPlayBtn.addListener(new ClickListener() {
             ImageButton myPlayBtn;
@@ -106,16 +99,12 @@ public class MenuScreen implements Screen {
     }
 
     public void exitBtnLogic() {
-        // if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-        // Gdx.app.exit();
-        // }
-
         ImageButton.ImageButtonStyle styleExitbtn = new ImageButton.ImageButtonStyle();
         styleExitbtn.imageUp = new TextureRegionDrawable(new TextureRegion(exitButton));
 
         ImageButton myExitBtn = new ImageButton(styleExitbtn);
-        myExitBtn.setPosition((game.WIDTH / 3 - this.EXIT_BUTTON_WIDTH / 2),
-                this.EXIT_BUTTON_Y);
+        myExitBtn.setPosition((Main.WIDTH / 3 - MenuScreen.EXIT_BUTTON_WIDTH / 2),
+                MenuScreen.EXIT_BUTTON_Y);
         myExitBtn.setSize(EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         myExitBtn.addListener(new ClickListener() {
             ImageButton myExitBtn;
@@ -165,10 +154,16 @@ public class MenuScreen implements Screen {
 
         background.render();
         game.batch.begin();
+
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            background.lastFrame = true;
+            background.walkAnimation.setFrameDuration((float) 0.0000000);
+        }
+
         if (background.lastFrame) {
             game.batch
-                    .draw(logo, (game.WIDTH
-                            / 3 - this.LOGO_WIDTH / 2), game.HEIGHT - 300,
+                    .draw(logo, (Main.WIDTH
+                            / 3 - MenuScreen.LOGO_WIDTH / 2), Main.HEIGHT - 300,
                             LOGO_WIDTH, LOGO_HEIGHT);
             stage.act(delta);
             stage.draw();
