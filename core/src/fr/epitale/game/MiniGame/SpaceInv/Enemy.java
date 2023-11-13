@@ -17,7 +17,7 @@ public class Enemy {
     protected static final float ENEMY_SPACING = 50;
     protected Array<EnemyProj> enemyProjs;
     private float shootTimer;
-    private static final float SHOOT_INTERVAL = 0.5f;
+    private static final float SHOOT_INTERVAL = 0.2f;
 
     public Enemy(float x, float y) {
         texture = new Texture("Tiles/tile_0122.png");
@@ -39,7 +39,7 @@ public class Enemy {
         shootTimer += delta;
 
         if (shootTimer >= SHOOT_INTERVAL) {
-            if (MathUtils.random(0, 9) == 0) {
+            if (MathUtils.random(0, 100) == 0) {
                 shoot();
             }
             shootTimer = 0.0f;

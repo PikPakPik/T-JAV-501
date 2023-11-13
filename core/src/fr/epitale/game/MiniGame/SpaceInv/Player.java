@@ -12,20 +12,25 @@ public class Player {
     private final Texture texture;
     private final Rectangle rect;
     protected final Array<PlayerProj> playerProjs;
+    private float shootingCooldown = 0;
+    private static final float SHOOTING_COOLDOWN_DURATION = 3;
+    private boolean isPlayerVisible = true;
+    private float blinkTimer = 0.0f;
+    private static final float BLINK_INTERVAL = 0.1f;
 
     public Player() {
         texture = new Texture("Tiles/tile_0085.png");
-        rect = new Rectangle((float) 800 / 2 - (float) 64 / 2, 20, 64, 64);
+        rect = new Rectangle((float) 800 / 2 - (float) 64 / 2, 20, 16, 16);
         playerProjs = new Array<>();
     }
 
     public void moveLeft() {
-        rect.x -= 200 * Gdx.graphics.getDeltaTime();
+        rect.x -= 300 * Gdx.graphics.getDeltaTime();
         keepPlayerIn();
     }
 
     public void moveRight() {
-        rect.x += 200 * Gdx.graphics.getDeltaTime();
+        rect.x += 300 * Gdx.graphics.getDeltaTime();
         keepPlayerIn();
     }
 
@@ -39,7 +44,7 @@ public class Player {
     }
 
     public void shoot() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && shootingCooldown <= 0) {
             PlayerProj playerProj = new PlayerProj(rect.x, rect.y);
             playerProjs.add(playerProj);
         }
@@ -69,9 +74,40 @@ public class Player {
             playerProj.dispose();
         }
     }
+    public void checkEnemyProjectileCollision(Array<Enemy> enemies) {
+        for (Enemy enemy : enemies) {
+            for (EnemyProj enemyProj : enemy.enemyProjs) {
+                if (enemyProj.collidesWith(rect)) {
+                    onPlayerHit();
+                }
+            }
+        }
+    }
+    private void onPlayerHit() {
+        shootingCooldown = SHOOTING_COOLDOWN_DURATION;
+    }
+
+    public void update(float delta, Array<Enemy> enemies) {
+        shootingCooldown = Math.max(0, shootingCooldown - delta);
+
+        checkEnemyProjectileCollision(enemies);
+        movePlayerProjs();
+    }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, rect.x, rect.y);
+        if (shootingCooldown > 0) {
+            blinkTimer += Gdx.graphics.getDeltaTime();
+            if (blinkTimer >= BLINK_INTERVAL) {
+                isPlayerVisible = !isPlayerVisible;
+                blinkTimer = 0.0f;
+            }
+
+            if (isPlayerVisible) {
+                batch.draw(texture, rect.x, rect.y);
+            }
+        } else {
+            batch.draw(texture, rect.x, rect.y);
+        }
     }
 
     public void dispose() {

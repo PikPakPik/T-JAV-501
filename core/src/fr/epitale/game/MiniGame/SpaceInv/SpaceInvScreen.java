@@ -5,12 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
 
 public class SpaceInvScreen implements Screen {
-
+    private Texture backgroundTexture;
     private final OrthographicCamera camera;
     private final SpriteBatch batch;
     private final Player player;
@@ -19,7 +20,7 @@ public class SpaceInvScreen implements Screen {
 
     public SpaceInvScreen(final Main game) {
 
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
 
@@ -43,24 +44,33 @@ public class SpaceInvScreen implements Screen {
     public void render(float delta) {
         handleInput();
         moveEnemies();
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Texture backgroundTexture = new Texture("Tiles/tile_0049.png");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        batch.begin();
         camera.update();
         batch.setProjectionMatrix(camera.combined);
+        batch.draw(backgroundTexture, 0, 0, 800, 600);
 
-        batch.begin();
         player.render(batch);
         for (Enemy enemy : enemies) {
             enemy.render(batch);
             enemy.moveProjs();
             enemy.move(moveEnemiesRight, Gdx.graphics.getDeltaTime());
         }
+
         player.movePlayerProjs();
         player.shoot();
         player.renderPlayerProjs(batch);
+        player.checkEnemyProjectileCollision(enemies);
+        player.renderPlayerProjs(batch);
+        player.update(delta, enemies);
         checkCollisions();
+
+        if (isGameOver()) {
+            dispose();
+            return;
+        }
+
         batch.end();
     }
 
@@ -103,6 +113,14 @@ public class SpaceInvScreen implements Screen {
             }
         }
     }
+    private boolean isGameOver() {
+        for (Enemy enemy : enemies) {
+            if (enemy.rect.y < 0) {
+                return true;
+            }
+        }
+        return enemies.size == 0;
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -124,6 +142,7 @@ public class SpaceInvScreen implements Screen {
     public void dispose() {
         player.dispose();
         player.disposePlayerProjs();
+        backgroundTexture.dispose();
         for (Enemy enemy : enemies) {
             enemy.dispose();
         }

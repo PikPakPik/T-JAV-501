@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class EnemyProj {
     protected Texture texture;
     protected Rectangle rect;
-    protected float speed = 300;
+    protected float speed = 50;
 
     public EnemyProj(float x, float y) {
         texture = new Texture("Tiles/tile_0130.png");
@@ -18,6 +18,9 @@ public class EnemyProj {
 
     public void move() {
         rect.y -= speed * Gdx.graphics.getDeltaTime();
+    }
+    public boolean collidesWith(Rectangle otherRect) {
+        return this.rect.overlaps(otherRect);
     }
 
     public void render(SpriteBatch batch) {
