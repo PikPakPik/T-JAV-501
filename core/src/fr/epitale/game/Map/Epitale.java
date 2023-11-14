@@ -21,6 +21,7 @@ public class Epitale extends ScreenAdapter {
   private float initialCharacterX;
   private float initialCharacterY;
 
+
   public Epitale(final Main game) {
     this.game = game;
   }
@@ -177,12 +178,48 @@ public class Epitale extends ScreenAdapter {
       return false;
     }
 
+    if (
+      door1Layer != null &&
+      (
+        isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      door2Layer != null &&
+      (
+        isWall(wallLayer, door2Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door2Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door2Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door2Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      door3Layer != null &&
+      (
+        isWall(wallLayer, door3Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door3Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door3Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door3Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      return false;
+    }
+
     if(portails1Layer != null &&
       (
-        isWall(portails1Layer, portails1Layer, topLeftX, topLeftY) ||
-        isWall(portails1Layer, portails1Layer, topRightX, topLeftY) ||
-        isWall(portails1Layer, portails1Layer, topLeftX, bottomLeftY) ||
-        isWall(portails1Layer, portails1Layer, topRightX, bottomLeftY)
+        isWall(wallLayer, portails1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, bottomLeftY)
       )
     ) {
       return false;
@@ -229,11 +266,13 @@ public class Epitale extends ScreenAdapter {
   private boolean isKey3(TiledMapTileLayer key3Layer, int x, int y) {
     return isCellNotNull(key3Layer, x, y);
   }
-  private boolean isWall(TiledMapTileLayer wallLayer, TiledMapTileLayer doorLayer, int x, int y) {
-    return isCellNotNull(wallLayer, x, y) || isCellNotNull(doorLayer, x, y);
-  }
+  private boolean isWall(TiledMapTileLayer wallLayer, TiledMapTileLayer secondlayer, int x, int y) {
+    TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
+    TiledMapTileLayer.Cell cell2 = (secondlayer != null) ? secondlayer.getCell(x, y) : null;
+    return cell != null || cell2 != null;
+}
 
-  private boolean isPressurePlate(TiledMapTileLayer key1Layer, int x, int y) {
+  private boolean isPressurePlate(TiledMapTileLayer pressureplate1Layer, int x, int y) {
     TiledMapTileLayer.Cell cell = (pressureplate1Layer != null) ? pressureplate1Layer.getCell(x, y) : null;
     return cell != null;
   }
