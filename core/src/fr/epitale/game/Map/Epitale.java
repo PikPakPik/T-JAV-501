@@ -6,41 +6,32 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Main;
+import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 
 public class Epitale extends ScreenAdapter {
-
-  private static final int WINDOW_WIDTH = 1280;
-  private static final int WINDOW_HEIGHT = 720;
-
   private final Main game;
   private Map tiledMap;
-
   public static Character character;
   private Texture characterTexture;
   private SpriteBatch batch;
+  private float initialCharacterX;
+  private float initialCharacterY;
 
   public Epitale(final Main game) {
     this.game = game;
-    setWindowMode();
   }
-
-  private void setWindowMode() {
-    Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-  }
-
-
   @Override
   public void show() {
     tiledMap = new EpitaleMap(character);
 
     character = new Character(34 * 16, 3 * 16);
 
-    characterTexture = new Texture("tiles/tile_0085.png");
+    characterTexture = new Texture("Tiles/tile_0085.png");
     batch = new SpriteBatch();
   }
-
   @Override
   public void render(float delta) {
     handleInput();
@@ -95,82 +86,118 @@ public class Epitale extends ScreenAdapter {
       character.setY(newY);
     }
   }
-
   private boolean isValidMove(float newX, float newY) {
-    int mapWidth =
-      tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
-    int mapHeight =
-      tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
+    int mapWidth = tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
+    int mapHeight = tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
 
-    // Vérification des limites de la carte
     if (newX < 0 || newX + 16 > mapWidth || newY < 0 || newY + 16 > mapHeight) {
       return false;
     }
 
-    TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.tiledMap
-      .getLayers()
-      .get("walls");
-    TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.tiledMap
-      .getLayers()
-      .get("JAPE");
-
-    // Convertir les coordonnées du monde en coordonnées de la couche de tuiles
+    MapLayers layers = tiledMap.tiledMap.getLayers();
+    TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
+    TiledMapTileLayer door1Layer = (TiledMapTileLayer) layers.get("door01");
+    TiledMapTileLayer door2Layer = (TiledMapTileLayer) layers.get("door02");
+    TiledMapTileLayer door3Layer = (TiledMapTileLayer) layers.get("door03");
+    TiledMapTileLayer key1Layer = (TiledMapTileLayer) layers.get("key01");
+    TiledMapTileLayer key2Layer = (TiledMapTileLayer) layers.get("key02");
+    TiledMapTileLayer key3Layer = (TiledMapTileLayer) layers.get("key03");
+    TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
+    TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get("spaceInv");
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
-
     int topRightX = (int) ((newX + 14) / 16);
-
     int bottomLeftY = (int) (newY / 16);
 
-    // Vérifier la collision avec la couche de murs
-    if (
-      isWall(wallLayer, topLeftX, topLeftY) ||
-      isWall(wallLayer, topRightX, topLeftY) ||
-      isWall(wallLayer, topLeftX, bottomLeftY) ||
-      isWall(wallLayer, topRightX, bottomLeftY)
+    if(key1Layer != null && ( isKey1(key1Layer, topLeftX, topLeftY) ||
+            isKey1(key1Layer, topRightX, topLeftY) ||
+            isKey1(key1Layer, topLeftX, bottomLeftY) ||
+            isKey1(key1Layer, topRightX, bottomLeftY))
+    ){
+      tiledMap.tiledMap.getLayers().remove(door1Layer);
+    }
+    if(key2Layer != null && ( isKey2(key2Layer, topLeftX, topLeftY) ||
+            isKey2(key2Layer, topRightX, topLeftY) ||
+            isKey2(key2Layer, topLeftX, bottomLeftY) ||
+            isKey2(key2Layer, topRightX, bottomLeftY))
+    ){
+      tiledMap.tiledMap.getLayers().remove(door2Layer);
+    }
+    if(key3Layer != null && ( isKey3(key1Layer, topLeftX, topLeftY) ||
+            isKey3(key3Layer, topRightX, topLeftY) ||
+            isKey3(key3Layer, topLeftX, bottomLeftY) ||
+            isKey3(key3Layer, topRightX, bottomLeftY))
+    ){
+      tiledMap.tiledMap.getLayers().remove(door3Layer);
+    }
+
+    if (wallLayer != null && (
+        isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, bottomLeftY)
+      )
     ) {
       return false;
     }
 
-    if (japeLayer == null) return true;
-    // Vérifier la collision avec la couche JAPE
-    if (
-      isJape(japeLayer, topLeftX, topLeftY) ||
-      isJape(japeLayer, topRightX, topLeftY) ||
-      isJape(japeLayer, topLeftX, bottomLeftY) ||
-      isJape(japeLayer, topRightX, bottomLeftY)
+
+    if (japeLayer != null && (
+              isJape(japeLayer, topLeftX, topLeftY) ||
+              isJape(japeLayer, topRightX, topLeftY) ||
+              isJape(japeLayer, topLeftX, bottomLeftY) ||
+              isJape(japeLayer, topRightX, bottomLeftY)
+            )
     ) {
-      // Changement de carte
-      //japeLayer.setVisible(false);
-      //japeLayer.setCell(topLeftX, topLeftY, null);
       tiledMap = new JAPEMap(character);
       character.setX(36 * 16);
-      character.setY(0 * 16);
+      character.setY(0);
       return false;
     }
 
+    if (isSpaceInv(spaceInvLayer, topLeftX, topLeftY) ||
+          isSpaceInv(spaceInvLayer, topRightX, topLeftY) ||
+          isSpaceInv(spaceInvLayer, topLeftX, bottomLeftY) ||
+          isSpaceInv(spaceInvLayer, topRightX, bottomLeftY)
+    ) {
+      initialCharacterX = character.getX();
+      initialCharacterY = character.getY();
+      game.setScreen(new SpaceInvScreen(game));
+      return false;
+    }
     return true;
   }
-
-  private boolean isWall(TiledMapTileLayer wallLayer, int x, int y) {
-    TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
+  private boolean isCellNotNull(TiledMapTileLayer layer, int x, int y) {
+    TiledMapTileLayer.Cell cell = (layer != null) ? layer.getCell(x, y) : null;
     return cell != null;
   }
-
+  private boolean isKey1(TiledMapTileLayer key1Layer, int x, int y) {
+    return isCellNotNull(key1Layer, x, y);
+  }
+  private boolean isKey2(TiledMapTileLayer key2Layer, int x, int y) {
+    return isCellNotNull(key2Layer, x, y);
+  }
+  private boolean isKey3(TiledMapTileLayer key3Layer, int x, int y) {
+    return isCellNotNull(key3Layer, x, y);
+  }
+  private boolean isWall(TiledMapTileLayer wallLayer, TiledMapTileLayer doorLayer, int x, int y) {
+    return isCellNotNull(wallLayer, x, y) || isCellNotNull(doorLayer, x, y);
+  }
   private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
-    TiledMapTileLayer.Cell cell = japeLayer.getCell(x, y);
-    return cell != null;
+    return isCellNotNull(japeLayer, x, y);
   }
-
+  private boolean isSpaceInv(TiledMapTileLayer spaceInvLayer, int x, int y) {
+    return isCellNotNull(spaceInvLayer, x, y);
+  }
   private boolean isCharacterVisible() {
     TiledMapTileLayer layerTunnel = (TiledMapTileLayer) tiledMap.tiledMap
-      .getLayers()
-      .get("tunnels");
+            .getLayers()
+            .get("tunnels");
 
     TiledMapTileLayer.Cell cellTunnel = layerTunnel.getCell(
-      (int) (character.getX() / layerTunnel.getTileWidth()),
-      (int) (character.getY() / layerTunnel.getTileHeight())
+            (int) (character.getX() / layerTunnel.getTileWidth()),
+            (int) (character.getY() / layerTunnel.getTileHeight())
     );
 
     if (cellTunnel != null) {
@@ -180,7 +207,6 @@ public class Epitale extends ScreenAdapter {
 
     return true;
   }
-
   @Override
   public void resize(int width, int height) {}
 
