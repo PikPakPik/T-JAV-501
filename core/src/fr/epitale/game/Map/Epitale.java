@@ -12,6 +12,7 @@ import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 
 public class Epitale extends ScreenAdapter {
+
   private final Main game;
   private Map tiledMap;
   public static Character character;
@@ -23,6 +24,7 @@ public class Epitale extends ScreenAdapter {
   public Epitale(final Main game) {
     this.game = game;
   }
+
   @Override
   public void show() {
     tiledMap = new EpitaleMap(character);
@@ -96,6 +98,7 @@ public class Epitale extends ScreenAdapter {
 
     MapLayers layers = tiledMap.tiledMap.getLayers();
     TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
+
     TiledMapTileLayer door1Layer = (TiledMapTileLayer) layers.get("door01");
     TiledMapTileLayer door2Layer = (TiledMapTileLayer) layers.get("door02");
     TiledMapTileLayer door3Layer = (TiledMapTileLayer) layers.get("door03");
@@ -104,6 +107,10 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer key3Layer = (TiledMapTileLayer) layers.get("key03");
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get("spaceInv");
+    TiledMapTileLayer portails1Layer = (TiledMapTileLayer) layers.get("portails1");
+    TiledMapTileLayer pressureplate1Layer = (TiledMapTileLayer) layers.get("pressureplate1");
+    TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
+
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
@@ -131,24 +138,64 @@ public class Epitale extends ScreenAdapter {
     ){
       tiledMap.tiledMap.getLayers().remove(door3Layer);
     }
+    if (
+      endLayerJAPE != null &&
+      (
+        isPressurePlate(endLayerJAPE, topLeftX, topLeftY) ||
+        isPressurePlate(endLayerJAPE, topRightX, topLeftY) ||
+        isPressurePlate(endLayerJAPE, topLeftX, bottomLeftY) ||
+        isPressurePlate(endLayerJAPE, topRightX, bottomLeftY)
 
-    if (wallLayer != null && (
-        isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
-        isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
-        isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
-        isWall(wallLayer, door1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      tiledMap = new EpitaleMap(character);
+      character.setX(36 * 16);
+      character.setY(0);
+      return false;
+    }
+
+    if(pressureplate1Layer != null &&
+      (
+        isPressurePlate(pressureplate1Layer, topLeftX, topLeftY) ||
+        isPressurePlate(pressureplate1Layer, topRightX, topLeftY) ||
+        isPressurePlate(pressureplate1Layer, topLeftX, bottomLeftY) ||
+        isPressurePlate(pressureplate1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      tiledMap.tiledMap.getLayers().remove(portails1Layer);
+    }
+
+    if (
+      wallLayer != null &&
+      (
+        isWall(wallLayer, portails1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, bottomLeftY)
       )
     ) {
       return false;
     }
 
+    if(portails1Layer != null &&
+      (
+        isWall(portails1Layer, portails1Layer, topLeftX, topLeftY) ||
+        isWall(portails1Layer, portails1Layer, topRightX, topLeftY) ||
+        isWall(portails1Layer, portails1Layer, topLeftX, bottomLeftY) ||
+        isWall(portails1Layer, portails1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      return false;
+    } 
 
-    if (japeLayer != null && (
-              isJape(japeLayer, topLeftX, topLeftY) ||
-              isJape(japeLayer, topRightX, topLeftY) ||
-              isJape(japeLayer, topLeftX, bottomLeftY) ||
-              isJape(japeLayer, topRightX, bottomLeftY)
-            )
+    if (
+      japeLayer != null &&
+      (
+        isJape(japeLayer, topLeftX, topLeftY) ||
+        isJape(japeLayer, topRightX, topLeftY) ||
+        isJape(japeLayer, topLeftX, bottomLeftY) ||
+        isJape(japeLayer, topRightX, bottomLeftY)
+      )
     ) {
       tiledMap = new JAPEMap(character);
       character.setX(36 * 16);
@@ -168,6 +215,7 @@ public class Epitale extends ScreenAdapter {
     }
     return true;
   }
+
   private boolean isCellNotNull(TiledMapTileLayer layer, int x, int y) {
     TiledMapTileLayer.Cell cell = (layer != null) ? layer.getCell(x, y) : null;
     return cell != null;
@@ -184,6 +232,12 @@ public class Epitale extends ScreenAdapter {
   private boolean isWall(TiledMapTileLayer wallLayer, TiledMapTileLayer doorLayer, int x, int y) {
     return isCellNotNull(wallLayer, x, y) || isCellNotNull(doorLayer, x, y);
   }
+
+  private boolean isPressurePlate(TiledMapTileLayer key1Layer, int x, int y) {
+    TiledMapTileLayer.Cell cell = (pressureplate1Layer != null) ? pressureplate1Layer.getCell(x, y) : null;
+    return cell != null;
+  }
+
   private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
     return isCellNotNull(japeLayer, x, y);
   }

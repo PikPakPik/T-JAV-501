@@ -10,7 +10,7 @@ public class Character {
         this.x = initialX;
         this.y = initialY;
         this.isVisible = true;
-        this.speed = 1.5f;
+        this.speed = 1f;
     }
 
     public void move(float deltaX, float deltaY) {
