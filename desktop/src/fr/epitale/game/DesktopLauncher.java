@@ -7,7 +7,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(120);
+		config.setForegroundFPS(400000);
 		config.setTitle("Projet JAV-501 | Epitale");
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		new Lwjgl3Application(new Main(), config);
