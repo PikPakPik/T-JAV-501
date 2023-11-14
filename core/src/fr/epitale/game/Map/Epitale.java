@@ -14,7 +14,7 @@ import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 public class Epitale extends ScreenAdapter {
 
   private final Main game;
-  private Map tiledMap;
+  public static Map tiledMap;
   public static Character character;
   private Texture characterTexture;
   private SpriteBatch batch;
