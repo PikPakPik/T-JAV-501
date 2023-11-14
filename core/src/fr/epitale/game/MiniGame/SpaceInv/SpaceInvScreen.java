@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
 
 public class SpaceInvScreen implements Screen {
+    protected final Main game;
     protected Texture backgroundTexture;
     private final OrthographicCamera camera;
     private final SpriteBatch batch;
@@ -19,7 +20,7 @@ public class SpaceInvScreen implements Screen {
     private boolean moveEnemiesRight = true;
 
     public SpaceInvScreen(final Main game) {
-
+        this.game = game;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
@@ -115,13 +116,12 @@ public class SpaceInvScreen implements Screen {
     }
     private boolean isGameOver() {
         for (Enemy enemy : enemies) {
-            if (enemy.rect.y < 0) {
+            if (enemy.rect.y < 20) {
                 return true;
             }
         }
         return enemies.size == 0;
     }
-
     @Override
     public void resize(int width, int height) {
     }
@@ -129,15 +129,12 @@ public class SpaceInvScreen implements Screen {
     @Override
     public void pause() {
     }
-
     @Override
     public void resume() {
     }
-
     @Override
     public void hide() {
     }
-
     @Override
     public void dispose() {
         player.dispose();
