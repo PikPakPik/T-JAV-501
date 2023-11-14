@@ -6,13 +6,11 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Main;
 
 public class Epitale extends ScreenAdapter {
-
-  private static final int WINDOW_WIDTH = 1280;
-  private static final int WINDOW_HEIGHT = 720;
 
   private final Main game;
   private Map tiledMap;
@@ -23,13 +21,7 @@ public class Epitale extends ScreenAdapter {
 
   public Epitale(final Main game) {
     this.game = game;
-    setWindowMode();
   }
-
-  private void setWindowMode() {
-    Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
-  }
-
 
   @Override
   public void show() {
@@ -102,61 +94,83 @@ public class Epitale extends ScreenAdapter {
     int mapHeight =
       tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
 
-    // Vérification des limites de la carte
     if (newX < 0 || newX + 16 > mapWidth || newY < 0 || newY + 16 > mapHeight) {
       return false;
     }
 
-    TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.tiledMap
-      .getLayers()
-      .get("walls");
-    TiledMapTileLayer japeLayer = (TiledMapTileLayer) tiledMap.tiledMap
-      .getLayers()
-      .get("JAPE");
-
-    // Convertir les coordonnées du monde en coordonnées de la couche de tuiles
+    MapLayers layers = tiledMap.tiledMap.getLayers();
+    TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
+    TiledMapTileLayer door1Layer = (TiledMapTileLayer) layers.get("portails1");
+    TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
+    TiledMapTileLayer key1Layer = (TiledMapTileLayer) layers.get("pressureplate1");
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
-
     int topRightX = (int) ((newX + 14) / 16);
-
     int bottomLeftY = (int) (newY / 16);
 
-    // Vérifier la collision avec la couche de murs
+    if(key1Layer != null &&
+      (
+        isPressurePlate(key1Layer, topLeftX, topLeftY) ||
+        isPressurePlate(key1Layer, topRightX, topLeftY) ||
+        isPressurePlate(key1Layer, topLeftX, bottomLeftY) ||
+        isPressurePlate(key1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      tiledMap.tiledMap.getLayers().remove(door1Layer);
+    }
+
     if (
-      isWall(wallLayer, topLeftX, topLeftY) ||
-      isWall(wallLayer, topRightX, topLeftY) ||
-      isWall(wallLayer, topLeftX, bottomLeftY) ||
-      isWall(wallLayer, topRightX, bottomLeftY)
+      wallLayer != null &&
+      (
+        isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, bottomLeftY)
+      )
     ) {
       return false;
     }
 
-    if (japeLayer == null) return true;
-    // Vérifier la collision avec la couche JAPE
-    if (
-      isJape(japeLayer, topLeftX, topLeftY) ||
-      isJape(japeLayer, topRightX, topLeftY) ||
-      isJape(japeLayer, topLeftX, bottomLeftY) ||
-      isJape(japeLayer, topRightX, bottomLeftY)
+    if(door1Layer != null &&
+      (
+        isWall(door1Layer, door1Layer, topLeftX, topLeftY) ||
+        isWall(door1Layer, door1Layer, topRightX, topLeftY) ||
+        isWall(door1Layer, door1Layer, topLeftX, bottomLeftY) ||
+        isWall(door1Layer, door1Layer, topRightX, bottomLeftY)
+      )
     ) {
-      // Changement de carte
-      //japeLayer.setVisible(false);
-      //japeLayer.setCell(topLeftX, topLeftY, null);
+      return false;
+    } 
+
+    if (
+      japeLayer != null &&
+      (
+        isJape(japeLayer, topLeftX, topLeftY) ||
+        isJape(japeLayer, topRightX, topLeftY) ||
+        isJape(japeLayer, topLeftX, bottomLeftY) ||
+        isJape(japeLayer, topRightX, bottomLeftY)
+      )
+    ) {
       tiledMap = new JAPEMap(character);
       character.setX(36 * 16);
-      character.setY(0 * 16);
+      character.setY(0);
       return false;
     }
 
     return true;
   }
 
-  private boolean isWall(TiledMapTileLayer wallLayer, int x, int y) {
-    TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
+  private boolean isPressurePlate(TiledMapTileLayer key1Layer, int x, int y) {
+    TiledMapTileLayer.Cell cell = (key1Layer != null) ? key1Layer.getCell(x, y) : null;
     return cell != null;
   }
+
+  private boolean isWall(TiledMapTileLayer wallLayer, TiledMapTileLayer door1Layer, int x, int y) {
+    TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
+    TiledMapTileLayer.Cell cell2 = (door1Layer != null) ? door1Layer.getCell(x, y) : null;
+    return cell != null || cell2 != null;
+}
 
   private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
     TiledMapTileLayer.Cell cell = japeLayer.getCell(x, y);
