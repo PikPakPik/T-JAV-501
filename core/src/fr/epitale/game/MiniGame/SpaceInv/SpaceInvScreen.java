@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
+import fr.epitale.game.Map.Epitale;
 
 public class SpaceInvScreen implements Screen {
     protected final Main game;
@@ -18,15 +19,18 @@ public class SpaceInvScreen implements Screen {
     private final Player player;
     private final Array<Enemy> enemies;
     private boolean moveEnemiesRight = true;
+    private final Epitale epitaleScreen;
 
-    public SpaceInvScreen(final Main game) {
+    public SpaceInvScreen(final Main game, Epitale epitaleScreen) {
         this.game = game;
+        this.epitaleScreen = epitaleScreen;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
 
         player = new Player();
         enemies = new Array<>();
+
 
         for (int row = 0; row < Enemy.ENEMY_ROWS; row++) {
             for (int col = 0; col < Enemy.ENEMY_COLS; col++) {
@@ -137,11 +141,6 @@ public class SpaceInvScreen implements Screen {
     }
     @Override
     public void dispose() {
-        player.dispose();
-        player.disposePlayerProjs();
-        backgroundTexture.dispose();
-        for (Enemy enemy : enemies) {
-            enemy.dispose();
-        }
+        game.setScreen(epitaleScreen);
     }
 }
