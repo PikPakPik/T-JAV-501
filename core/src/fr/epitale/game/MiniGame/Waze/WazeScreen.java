@@ -15,10 +15,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
 import fr.epitale.game.Map.JAPEMap;
+import javax.swing.text.Style;
 
 public class WazeScreen implements Screen {
 
@@ -39,6 +41,14 @@ public class WazeScreen implements Screen {
   private ShapeRenderer shapeRenderer;
   private Pixmap pixmap;
   private TextureRegion textureRegion;
+  private boolean hurryUp = false;
+  private Timer.Task hurryUpTask = new Timer.Task() {
+    @Override
+    public void run() {
+      hurryUp = !hurryUp;
+    }
+  };
+  private Timer hurryUpTimer = new Timer();
 
   public WazeScreen(
     final Main game,
@@ -51,7 +61,7 @@ public class WazeScreen implements Screen {
     japeMap = new JAPEMap(character);
     character.setX(40 * 16);
     character.setY(2 * 16);
-    timeRemaining = 300f;
+    timeRemaining = 60f;
     // Initialiser la police pour afficher le temps restant
     batch = new SpriteBatch();
     batchEnd = new SpriteBatch();
@@ -73,6 +83,7 @@ public class WazeScreen implements Screen {
   @Override
   public void show() {
     characterTexture = new Texture("tiles/tile_0085.png");
+    hurryUpTimer.scheduleTask(hurryUpTask, 1f, 0.5f);
   }
 
   @Override
@@ -131,11 +142,27 @@ public class WazeScreen implements Screen {
     } else {
       font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
     }
+    batchEnd.end();
     font.getData().setScale(4, 4); // Augmente la taille de la police par un facteur de 2
     if (minutes == 2 && seconds < 50) {
       font.setColor(Color.ORANGE);
     } else if (minutes == 0 && seconds < 60) {
-      font.setColor(Color.RED);
+      batchEnd.begin();
+      if (seconds < 10) {
+        if (hurryUp) {
+          font.setColor(Color.RED);
+        } else {
+          font.setColor(Color.ORANGE);
+        }
+        font.draw(batchEnd, minutes + ":0" + seconds, 10, 50);
+      } else {
+        if (hurryUp) {
+          font.setColor(Color.RED);
+        } else {
+          font.setColor(Color.ORANGE);
+        }
+        font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
+      }
     }
     batchEnd.end();
     batchEnd.begin();
@@ -161,8 +188,8 @@ public class WazeScreen implements Screen {
     batchEnd.end();
   }
 
-  private void resetCharacterPosition() {
-    character.setPos(40 * 16, 2 * 16);
+  private boolean resetCharacterPosition() {
+    return character.setPos(40 * 16, 2 * 16);
   }
 
   private void handleInput() {
@@ -255,9 +282,8 @@ public class WazeScreen implements Screen {
         isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
       )
     ) {
-      resetCharacterPosition();
-      System.out.println("TRAP");
-      return false;
+      System.out.println(character.getX() + " " + character.getY());
+      return resetCharacterPosition(); // Modifier ici
     }
 
     if (
@@ -359,16 +385,20 @@ public class WazeScreen implements Screen {
 
   @Override
   public void dispose() {
-      // Libérez les ressources dans dispose()
-      characterTexture.dispose();
-      batch.dispose();
-      batchEnd.dispose();
-      font.dispose();
-      gameOverTexture.dispose();
+    // Libérez les ressources dans dispose()
+    characterTexture.dispose();
+    batch.dispose();
+    batchEnd.dispose();
+    font.dispose();
+    gameOverTexture.dispose();
+    pixmap.dispose();
+    textureRegion.getTexture().dispose();
+
+    if (shapeRenderer != null) {
       shapeRenderer.dispose();
-      pixmap.dispose();
-      textureRegion.getTexture().dispose();
-      // Ajoutez d'autres libérations de ressources si nécessaire
-      game.setScreen(epitaleScreen);
+      shapeRenderer = null; // Assurez-vous de définir shapeRenderer sur null après l'avoir libéré
+    }
+    // Ajoutez d'autres libérations de ressources si nécessaire
+    game.setScreen(epitaleScreen);
   }
 }
