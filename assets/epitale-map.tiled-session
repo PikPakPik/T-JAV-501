@@ -3,17 +3,17 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "epitales_tiles.tsx",
+    "activeFile": "epitales-map.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "epitales-map.tmx": {
-            "scale": 1,
-            "selectedLayer": 5,
+            "scale": 0.75,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 632.5,
-                "y": 436
+                "x": 567.3333333333333,
+                "y": 717.3333333333333
             }
         },
         "epitales_tiles.tsx": {
@@ -34,8 +34,8 @@
     ],
     "project": "epitale-map.tiled-project",
     "recentFiles": [
-        "epitales-map.tmx",
-        "epitales_tiles.tsx"
+        "epitales_tiles.tsx",
+        "epitales-map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.type": 1

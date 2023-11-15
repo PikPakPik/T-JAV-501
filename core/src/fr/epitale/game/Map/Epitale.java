@@ -14,22 +14,20 @@ import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 public class Epitale extends ScreenAdapter {
 
   private final Main game;
-  private Map tiledMap;
+  public static Map tiledMap;
   public static Character character;
   private Texture characterTexture;
   private SpriteBatch batch;
-  private float initialCharacterX;
-  private float initialCharacterY;
-
+  private static EpitaleMap epitaleMap;
 
   public Epitale(final Main game) {
     this.game = game;
+    epitaleMap = new EpitaleMap(character);
   }
 
   @Override
   public void show() {
-    tiledMap = new EpitaleMap(character);
-
+    tiledMap = epitaleMap;
     character = new Character(34 * 16, 3 * 16);
 
     characterTexture = new Texture("Tiles/tile_0085.png");
@@ -151,7 +149,7 @@ public class Epitale extends ScreenAdapter {
     ) {
       tiledMap = new EpitaleMap(character);
       character.setX(36 * 16);
-      character.setY(0);
+      character.setY(3 * 16);
       return false;
     }
 
@@ -235,8 +233,8 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap = new JAPEMap(character);
-      character.setX(36 * 16);
-      character.setY(0);
+      character.setX(34 * 16);
+      character.setY(3 * 16);
       return false;
     }
 
@@ -245,10 +243,8 @@ public class Epitale extends ScreenAdapter {
           isSpaceInv(spaceInvLayer, topLeftX, bottomLeftY) ||
           isSpaceInv(spaceInvLayer, topRightX, bottomLeftY)
     ) {
-      initialCharacterX = character.getX();
-      initialCharacterY = character.getY();
-      game.setScreen(new SpaceInvScreen(game));
-      return false;
+      SpaceInvScreen spaceInvScreen = new SpaceInvScreen(game, this);
+      game.setScreen(spaceInvScreen);
     }
     return true;
   }
@@ -314,6 +310,6 @@ public class Epitale extends ScreenAdapter {
 
   @Override
   public void dispose() {
-    tiledMap.dispose();
+    epitaleMap.dispose();
   }
 }
