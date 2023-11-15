@@ -7,6 +7,7 @@ public class Main extends Game {
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 
+
 	public SpriteBatch batch;
 	Background background;
 
@@ -15,6 +16,11 @@ public class Main extends Game {
 		batch = new SpriteBatch();
 		background = new Background();
 		background.create();
+		this.setScreen(new MenuScreen(this, background));
+	}
+	public void restartGame() {
+		getScreen().dispose();
+
 		this.setScreen(new MenuScreen(this, background));
 	}
 }

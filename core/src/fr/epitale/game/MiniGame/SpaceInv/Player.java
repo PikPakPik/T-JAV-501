@@ -69,11 +69,6 @@ public class Player {
         }
     }
 
-    public void disposePlayerProjs() {
-        for (PlayerProj playerProj : playerProjs) {
-            playerProj.dispose();
-        }
-    }
     public void checkEnemyProjectileCollision(Array<Enemy> enemies) {
         for (Enemy enemy : enemies) {
             for (EnemyProj enemyProj : enemy.enemyProjs) {
