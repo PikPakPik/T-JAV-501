@@ -39,7 +39,6 @@ public class MenuScreen implements Screen {
 
     public MenuScreen(final Main game, final Background background) {
         this.game = game;
-
         this.background = background;
         logo = new Texture("Menu/Game_Logo.png");
         playButton = new Texture("Menu/play_Button.png");
