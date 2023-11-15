@@ -8,9 +8,9 @@ import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public abstract class Map implements Screen {
-  protected OrthographicCamera camera;
+  public OrthographicCamera camera;
   protected TiledMap tiledMap;
-  protected BatchTiledMapRenderer tiledMapRenderer;
+  public BatchTiledMapRenderer tiledMapRenderer;
   float zoomFactor = 0.3f;
 
   public Map(String map, Character character) {
