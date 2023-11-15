@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import fr.epitale.game.Main;
+import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
 
 public class SpaceInvScreen implements Screen {
@@ -70,12 +71,10 @@ public class SpaceInvScreen implements Screen {
         player.renderPlayerProjs(batch);
         player.update(delta, enemies);
         checkCollisions();
-
         if (isGameOver()) {
             dispose();
             return;
         }
-
         batch.end();
     }
 
@@ -142,5 +141,6 @@ public class SpaceInvScreen implements Screen {
     @Override
     public void dispose() {
         game.setScreen(epitaleScreen);
+        Epitale.character = new Character(28 * 16, 69 * 16);
     }
 }

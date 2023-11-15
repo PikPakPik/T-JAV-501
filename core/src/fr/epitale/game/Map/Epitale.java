@@ -23,13 +23,12 @@ public class Epitale extends ScreenAdapter {
   public Epitale(final Main game) {
     this.game = game;
     epitaleMap = new EpitaleMap(character);
+    character = new Character(34 * 16, 3 * 16);
   }
 
   @Override
   public void show() {
     tiledMap = epitaleMap;
-    character = new Character(34 * 16, 3 * 16);
-
     characterTexture = new Texture("Tiles/tile_0085.png");
     batch = new SpriteBatch();
   }
@@ -245,6 +244,7 @@ public class Epitale extends ScreenAdapter {
     ) {
       SpaceInvScreen spaceInvScreen = new SpaceInvScreen(game, this);
       game.setScreen(spaceInvScreen);
+      tiledMap.tiledMap.getLayers().remove(spaceInvLayer);
     }
     return true;
   }
