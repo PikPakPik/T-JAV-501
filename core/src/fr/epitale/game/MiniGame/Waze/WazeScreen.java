@@ -7,13 +7,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.utils.TimeUtils;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
@@ -24,8 +25,13 @@ public class WazeScreen implements Screen {
   private final Main game;
   public Character character;
   private Texture characterTexture;
-  private SpriteBatch batch;
+  private SpriteBatch batch;  
+  private SpriteBatch batchEnd;
+  private BitmapFont font;
+  private float timeRemaining;
 
+  private boolean gameOverLose = false;
+  private long gameOverStartTime;
   private static JAPEMap japeMap;
   private final Epitale epitaleScreen;
 
@@ -40,12 +46,16 @@ public class WazeScreen implements Screen {
     japeMap = new JAPEMap(character);
     character.setX(40 * 16);
     character.setY(2 * 16);
+    timeRemaining = 300f;
+    // Initialiser la police pour afficher le temps restant
+    font = new BitmapFont();
   }
 
   @Override
   public void show() {
     characterTexture = new Texture("tiles/tile_0085.png");
     batch = new SpriteBatch();
+    batchEnd = new SpriteBatch();
   }
 
   @Override
@@ -53,6 +63,12 @@ public class WazeScreen implements Screen {
     handleInput();
     updateCharacterPosition(0, 0);
     japeMap.moveCamera();
+    timeRemaining -= delta;
+    Texture gameOverTexture = new Texture("gameover.jpg");
+
+    // Convertir le temps restant en minutes et secondes
+    int minutes = (int) (timeRemaining / 60);
+    int seconds = (int) (timeRemaining % 60);
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -61,39 +77,74 @@ public class WazeScreen implements Screen {
     japeMap.tiledMapRenderer.render();
 
     if (isCharacterVisible()) {
-      batch.begin(); // Début de la première session de dessin
+      batch.begin();
       batch.setProjectionMatrix(japeMap.camera.combined);
       batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-
-      batch.end(); // Fin de la première session de dessin
+      batch.end();
     }
 
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     shapeRenderer.setProjectionMatrix(japeMap.camera.combined);
 
-    // Définir la largeur de ligne
-    Gdx.gl.glLineWidth(20f); // Remplacez 3f par la largeur de ligne souhaitée
+    Gdx.gl.glLineWidth(20f);
 
-    // Dessiner un grand nombre de cercles concentriques pour simuler un effet de vision
     int initialRadius = Math.max(
       Gdx.graphics.getWidth(),
       Gdx.graphics.getHeight()
     );
-    for (int radius = initialRadius; radius > 50; radius -= 1) { // Arrêter de dessiner des cercles lorsque le rayon atteint 200
+    for (int radius = initialRadius; radius > 50; radius -= 1) {
       shapeRenderer.begin(ShapeType.Line);
       shapeRenderer.setColor(new Color(0, 0, 0, 0.1f));
       shapeRenderer.circle(character.getX() + 8, character.getY() + 8, radius);
       shapeRenderer.end();
     }
-    Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
+    Pixmap pixmap = new Pixmap(
+      Gdx.graphics.getWidth(),
+      Gdx.graphics.getHeight(),
+      Pixmap.Format.RGBA8888
+    );
     pixmap.setColor(new Color(0, 0, 0, 0.5f));
     pixmap.fill();
 
     TextureRegion textureRegion = new TextureRegion(new Texture(pixmap));
 
     batch.begin();
-    batch.draw(textureRegion, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.draw(
+      textureRegion,
+      0,
+      0,
+      Gdx.graphics.getWidth(),
+      Gdx.graphics.getHeight()
+    );
     batch.end();
+
+    // Afficher le temps restant
+    batchEnd.begin();
+    font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
+    font.getData().setScale(2, 2); // Augmente la taille de la police par un facteur de 2
+    if(minutes == 0 && seconds < 30) {
+      font.setColor(Color.RED);
+    }
+
+    if (timeRemaining <= 0) {
+      if (!gameOverLose) {
+        gameOverLose = true;
+        gameOverStartTime = TimeUtils.millis();
+      }
+      long elapsedTime = TimeUtils.timeSinceMillis(gameOverStartTime);
+      if (elapsedTime > 5000) {
+        ((Main) Gdx.app.getApplicationListener()).restartGame();
+        gameOverLose = false;
+      } else {
+        batchEnd.draw(gameOverTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+      }
+    }
+    batchEnd.end();
+  }
+
+  private void resetCharacterPosition() {
+    character.setX(40 * 16);
+    character.setY(2 * 16);
   }
 
   private void handleInput() {
@@ -140,6 +191,7 @@ public class WazeScreen implements Screen {
 
     MapLayers layers = japeMap.tiledMap.getLayers();
     TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
+    TiledMapTileLayer trapsLayer = (TiledMapTileLayer) layers.get("traps");
     TiledMapTileLayer[] portailsLayers = new TiledMapTileLayer[4];
     TiledMapTileLayer[] pressureplateLayers = new TiledMapTileLayer[4];
 
@@ -169,6 +221,19 @@ public class WazeScreen implements Screen {
       ) {
         japeMap.tiledMap.getLayers().remove(portailsLayers[i]);
       }
+    }
+
+    if (
+      trapsLayer != null &&
+      (
+        isWall(trapsLayer, trapsLayer, topLeftX, topLeftY) ||
+        isWall(trapsLayer, trapsLayer, topRightX, topLeftY) ||
+        isWall(trapsLayer, trapsLayer, topLeftX, bottomLeftY) ||
+        isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
+      )
+    ) {
+      resetCharacterPosition();
+      return false;
     }
 
     if (

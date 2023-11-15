@@ -258,17 +258,6 @@ public class Epitale extends ScreenAdapter {
     return cell != null || cell2 != null;
   }
 
-  private boolean isPressurePlate(
-    TiledMapTileLayer pressureplate1Layer,
-    int x,
-    int y
-  ) {
-    TiledMapTileLayer.Cell cell = (pressureplate1Layer != null)
-      ? pressureplate1Layer.getCell(x, y)
-      : null;
-    return cell != null;
-  }
-
   private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
     return isCellNotNull(japeLayer, x, y);
   }
