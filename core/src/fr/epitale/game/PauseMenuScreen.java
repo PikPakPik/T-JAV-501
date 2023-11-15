@@ -13,17 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import fr.epitale.game.Map.Epitale;
 
-public class MenuScreen implements Screen {
-    // private static final int FRAME_COLS = 5, FRAME_ROWS = 61;
-    private static final int EXIT_BUTTON_WIDTH = 250;
-    private static final int EXIT_BUTTON_HEIGHT = 120;
-    private static final int EXIT_BUTTON_Y = 70;
-    private static final int PLAY_BUTTON_WIDTH = 300;
-    private static final int PLAY_BUTTON_HEIGHT = 120;
-    private static final int PLAY_BUTTON_Y = 200;
+public class PauseMenuScreen implements Screen {
+    private static final int EXIT_BUTTON_WIDTH = 500;
+    private static final int EXIT_BUTTON_HEIGHT = 240;
+    public static final int EXIT_BUTTON_Y = 100;
+    private static final int PLAY_BUTTON_WIDTH = 600;
+    private static final int PLAY_BUTTON_HEIGHT = 240;
+    private static final int PLAY_BUTTON_Y = 500;
     private static final int LOGO_WIDTH = 600;
     private static final int LOGO_HEIGHT = 250;
 
@@ -37,7 +35,7 @@ public class MenuScreen implements Screen {
 
     private Stage stage;
 
-    public MenuScreen(final Main game, final Background background) {
+    public PauseMenuScreen(final Main game, final Background background) {
         this.game = game;
         this.background = background;
         logo = new Texture("Menu/Game_Logo.png");
@@ -50,7 +48,11 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         playBtnLogicV2();
         exitBtnLogic();
+    }
 
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(null);
     }
 
     public void playBtnLogicV2() {
@@ -59,8 +61,7 @@ public class MenuScreen implements Screen {
         stylePlaybtn.imageUp = new TextureRegionDrawable(new TextureRegion(playButton));
 
         ImageButton myPlayBtn = new ImageButton(stylePlaybtn);
-        myPlayBtn.setPosition((Main.WIDTH / 3 - MenuScreen.PLAY_BUTTON_WIDTH / 2),
-                MenuScreen.PLAY_BUTTON_Y);
+        myPlayBtn.setPosition((stage.getWidth() - PLAY_BUTTON_WIDTH) / 2, (stage.getHeight()- (float) PLAY_BUTTON_Y) /2);
         myPlayBtn.setSize(PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT);
         myPlayBtn.addListener(new ClickListener() {
             ImageButton myPlayBtn;
@@ -69,22 +70,15 @@ public class MenuScreen implements Screen {
                 this.myPlayBtn = myPlayBtn;
                 return this;
             }
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                // TODO Auto-generated method stub
                 myPlayBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(playButtonHover));
-
                 super.enter(event, x, y, pointer, fromActor);
             }
-
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                // TODO Auto-generated method stub
                 myPlayBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(playButton));
-
                 super.exit(event, x, y, pointer, toActor);
-
             }
 
             @Override
@@ -102,8 +96,7 @@ public class MenuScreen implements Screen {
         styleExitbtn.imageUp = new TextureRegionDrawable(new TextureRegion(exitButton));
 
         ImageButton myExitBtn = new ImageButton(styleExitbtn);
-        myExitBtn.setPosition((Main.WIDTH / 3 - MenuScreen.EXIT_BUTTON_WIDTH / 2),
-                MenuScreen.EXIT_BUTTON_Y);
+        myExitBtn.setPosition((stage.getWidth() - EXIT_BUTTON_WIDTH) / 2, (stage.getHeight() - (float) EXIT_BUTTON_Y) / 2 + EXIT_BUTTON_Y);
         myExitBtn.setSize(EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         myExitBtn.addListener(new ClickListener() {
             ImageButton myExitBtn;
@@ -115,6 +108,7 @@ public class MenuScreen implements Screen {
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                // TODO Auto-generated method stub
                 myExitBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(exitButtonHover));
 
                 super.enter(event, x, y, pointer, fromActor);
@@ -122,6 +116,7 @@ public class MenuScreen implements Screen {
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                // TODO Auto-generated method stub
                 myExitBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(exitButton));
 
                 super.exit(event, x, y, pointer, toActor);
@@ -138,58 +133,48 @@ public class MenuScreen implements Screen {
 
         stage.addActor(myExitBtn);
     }
-
-    @Override
-    public void show() {
-    }
-
     @Override
     public void render(float delta) {
-
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         background.render();
         game.batch.begin();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            background.lastFrame = true;
-            background.walkAnimation.setFrameDuration((float) 0.0000000);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(game.getPreviousScreen());
+            Gdx.input.setInputProcessor(game.getPreviousInputProcessor());
         }
-
         if (background.lastFrame) {
             game.batch.draw(logo, (Main.WIDTH / 3 - LOGO_WIDTH / 2), Main.HEIGHT - 300,
-                            LOGO_WIDTH, LOGO_HEIGHT);
+                    LOGO_WIDTH, LOGO_HEIGHT);
             stage.act(delta);
             stage.draw();
+            stage.act(delta);
         }
-
         game.batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
+
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
+
     }
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
+        dispose();
     }
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
     }
-
 }

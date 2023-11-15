@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import fr.epitale.game.Background;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
+import fr.epitale.game.PauseMenuScreen;
 
 public class Epitale extends ScreenAdapter {
   private final Main game;
@@ -18,11 +20,16 @@ public class Epitale extends ScreenAdapter {
   private Texture characterTexture;
   private SpriteBatch batch;
   private static EpitaleMap epitaleMap;
+  private boolean isPaused = false;
+  private PauseMenuScreen pauseMenuScreen;
+  Background background;
 
   public Epitale(final Main game) {
     this.game = game;
     epitaleMap = new EpitaleMap(character);
     character = new Character(34 * 16, 3 * 16);
+    background = new Background();
+    background.create();
   }
 
   @Override
@@ -30,28 +37,45 @@ public class Epitale extends ScreenAdapter {
     tiledMap = epitaleMap;
     characterTexture = new Texture("Tiles/tile_0085.png");
     batch = new SpriteBatch();
+    pauseMenuScreen = new PauseMenuScreen(game, background);
   }
   @Override
   public void render(float delta) {
-    handleInput();
-    updateCharacterPosition(0, 0);
+    if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+      isPaused = !isPaused;
 
-    tiledMap.moveCamera();
-
-    Gdx.gl.glClearColor(0, 0, 0, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-    tiledMap.tiledMapRenderer.setView(tiledMap.camera);
-    tiledMap.tiledMapRenderer.render();
-
-    batch.setProjectionMatrix(tiledMap.camera.combined);
-    batch.begin();
-
-    if (isCharacterVisible()) {
-      batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+      if (isPaused) {
+        game.setPreviousScreen(this);
+        game.setPreviousInputProcessor(Gdx.input.getInputProcessor());
+        game.setScreen(pauseMenuScreen);
+      } else {
+        game.setScreen(this);
+        Gdx.input.setInputProcessor(null);
+      }
     }
 
-    batch.end();
+    if (!isPaused) {
+      handleInput();
+      updateCharacterPosition(0, 0);
+
+      tiledMap.moveCamera();
+
+      Gdx.gl.glClearColor(0, 0, 0, 1);
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+      tiledMap.tiledMapRenderer.setView(tiledMap.camera);
+      tiledMap.tiledMapRenderer.render();
+
+      batch.setProjectionMatrix(tiledMap.camera.combined);
+      batch.begin();
+
+      if (isCharacterVisible()) {
+        batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+      }
+
+      batch.end();
+    }
+
   }
 
   private void handleInput() {
