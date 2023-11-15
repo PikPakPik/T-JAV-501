@@ -12,7 +12,6 @@ import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 
 public class Epitale extends ScreenAdapter {
-
   private final Main game;
   public static Map tiledMap;
   public static Character character;
@@ -220,7 +219,7 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       return false;
-    } 
+    }
 
     if (
       japeLayer != null &&
@@ -232,8 +231,8 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap = new JAPEMap(character);
-      character.setX(34 * 16);
-      character.setY(3 * 16);
+      character.setX(40 * 16);
+      character.setY(2 * 16);
       return false;
     }
 
