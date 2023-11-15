@@ -7,17 +7,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
 import fr.epitale.game.Map.JAPEMap;
+import javax.swing.text.Style;
 
 public class WazeScreen implements Screen {
 
@@ -25,9 +28,27 @@ public class WazeScreen implements Screen {
   public Character character;
   private Texture characterTexture;
   private SpriteBatch batch;
+  private SpriteBatch batchEnd;
+  private BitmapFont font;
+  private float timeRemaining;
 
+  private boolean gameOverLose = false;
+  private long gameOverStartTime;
   private static JAPEMap japeMap;
   private final Epitale epitaleScreen;
+
+  private Texture gameOverTexture;
+  private ShapeRenderer shapeRenderer;
+  private Pixmap pixmap;
+  private TextureRegion textureRegion;
+  private boolean hurryUp = false;
+  private Timer.Task hurryUpTask = new Timer.Task() {
+    @Override
+    public void run() {
+      hurryUp = !hurryUp;
+    }
+  };
+  private Timer hurryUpTimer = new Timer();
 
   public WazeScreen(
     final Main game,
@@ -40,12 +61,29 @@ public class WazeScreen implements Screen {
     japeMap = new JAPEMap(character);
     character.setX(40 * 16);
     character.setY(2 * 16);
+    timeRemaining = 60f;
+    // Initialiser la police pour afficher le temps restant
+    batch = new SpriteBatch();
+    batchEnd = new SpriteBatch();
+    font = new BitmapFont();
+
+    gameOverTexture = new Texture("gameover.jpg");
+    shapeRenderer = new ShapeRenderer();
+    pixmap =
+      new Pixmap(
+        Gdx.graphics.getWidth(),
+        Gdx.graphics.getHeight(),
+        Pixmap.Format.RGBA8888
+      );
+    pixmap.setColor(new Color(0, 0, 0, 0.5f));
+    pixmap.fill();
+    textureRegion = new TextureRegion(new Texture(pixmap));
   }
 
   @Override
   public void show() {
     characterTexture = new Texture("tiles/tile_0085.png");
-    batch = new SpriteBatch();
+    hurryUpTimer.scheduleTask(hurryUpTask, 1f, 0.5f);
   }
 
   @Override
@@ -53,47 +91,105 @@ public class WazeScreen implements Screen {
     handleInput();
     updateCharacterPosition(0, 0);
     japeMap.moveCamera();
+    timeRemaining -= delta;
+
+    // Convertir le temps restant en minutes et secondes
+    int minutes = (int) (timeRemaining / 60);
+    int seconds = (int) (timeRemaining % 60);
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     japeMap.tiledMapRenderer.setView(japeMap.camera);
     japeMap.tiledMapRenderer.render();
+    batch.setProjectionMatrix(japeMap.camera.combined);
 
     if (isCharacterVisible()) {
-      batch.begin(); // Début de la première session de dessin
-      batch.setProjectionMatrix(japeMap.camera.combined);
+      batch.begin();
       batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-
-      batch.end(); // Fin de la première session de dessin
+      batch.end();
     }
 
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
     shapeRenderer.setProjectionMatrix(japeMap.camera.combined);
+    shapeRenderer.begin(ShapeType.Line);
 
-    // Définir la largeur de ligne
-    Gdx.gl.glLineWidth(20f); // Remplacez 3f par la largeur de ligne souhaitée
+    Gdx.gl.glLineWidth(15f);
 
-    // Dessiner un grand nombre de cercles concentriques pour simuler un effet de vision
     int initialRadius = Math.max(
       Gdx.graphics.getWidth(),
       Gdx.graphics.getHeight()
     );
-    for (int radius = initialRadius; radius > 50; radius -= 1) { // Arrêter de dessiner des cercles lorsque le rayon atteint 200
-      shapeRenderer.begin(ShapeType.Line);
+    for (int radius = initialRadius; radius > 50; radius -= 1) {
       shapeRenderer.setColor(new Color(0, 0, 0, 0.1f));
       shapeRenderer.circle(character.getX() + 8, character.getY() + 8, radius);
-      shapeRenderer.end();
     }
-    Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
-    pixmap.setColor(new Color(0, 0, 0, 0.5f));
-    pixmap.fill();
-
-    TextureRegion textureRegion = new TextureRegion(new Texture(pixmap));
+    shapeRenderer.end();
 
     batch.begin();
-    batch.draw(textureRegion, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.draw(
+      textureRegion,
+      0,
+      0,
+      Gdx.graphics.getWidth(),
+      Gdx.graphics.getHeight()
+    );
     batch.end();
+
+    // Afficher le temps restant
+    batchEnd.begin();
+    if (seconds < 10) {
+      font.draw(batchEnd, minutes + ":0" + seconds, 10, 50);
+    } else {
+      font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
+    }
+    batchEnd.end();
+    font.getData().setScale(4, 4); // Augmente la taille de la police par un facteur de 2
+    if (minutes == 2 && seconds < 50) {
+      font.setColor(Color.ORANGE);
+    } else if (minutes == 0 && seconds < 60) {
+      batchEnd.begin();
+      if (seconds < 10) {
+        if (hurryUp) {
+          font.setColor(Color.RED);
+        } else {
+          font.setColor(Color.ORANGE);
+        }
+        font.draw(batchEnd, minutes + ":0" + seconds, 10, 50);
+      } else {
+        if (hurryUp) {
+          font.setColor(Color.RED);
+        } else {
+          font.setColor(Color.ORANGE);
+        }
+        font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
+      }
+    }
+    batchEnd.end();
+    batchEnd.begin();
+    if (timeRemaining <= 0) {
+      if (!gameOverLose) {
+        gameOverLose = true;
+        gameOverStartTime = TimeUtils.millis();
+      }
+      long elapsedTime = TimeUtils.timeSinceMillis(gameOverStartTime);
+      if (elapsedTime > 5000) {
+        ((Main) Gdx.app.getApplicationListener()).restartGame();
+        gameOverLose = false;
+      } else {
+        batchEnd.draw(
+          gameOverTexture,
+          0,
+          0,
+          Gdx.graphics.getWidth(),
+          Gdx.graphics.getHeight()
+        );
+      }
+    }
+    batchEnd.end();
+  }
+
+  private boolean resetCharacterPosition() {
+    return character.setPos(40 * 16, 2 * 16);
   }
 
   private void handleInput() {
@@ -102,15 +198,19 @@ public class WazeScreen implements Screen {
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
       deltaX = -character.getSpeed();
+      System.out.println("LEFT");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
       deltaX = character.getSpeed();
+      System.out.println("RIGHT");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
       deltaY = character.getSpeed();
+      System.out.println("UP");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
       deltaY = -character.getSpeed();
+      System.out.println("DOWN");
     }
 
     updateCharacterPosition(deltaX, deltaY);
@@ -140,6 +240,7 @@ public class WazeScreen implements Screen {
 
     MapLayers layers = japeMap.tiledMap.getLayers();
     TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
+    TiledMapTileLayer trapsLayer = (TiledMapTileLayer) layers.get("traps");
     TiledMapTileLayer[] portailsLayers = new TiledMapTileLayer[4];
     TiledMapTileLayer[] pressureplateLayers = new TiledMapTileLayer[4];
 
@@ -167,8 +268,22 @@ public class WazeScreen implements Screen {
           isPressurePlate(pressureplateLayer, topRightX, bottomLeftY)
         )
       ) {
+        System.out.println("PRESSURE PLATE");
         japeMap.tiledMap.getLayers().remove(portailsLayers[i]);
       }
+    }
+
+    if (
+      trapsLayer != null &&
+      (
+        isWall(trapsLayer, trapsLayer, topLeftX, topLeftY) ||
+        isWall(trapsLayer, trapsLayer, topRightX, topLeftY) ||
+        isWall(trapsLayer, trapsLayer, topLeftX, bottomLeftY) ||
+        isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
+      )
+    ) {
+      System.out.println(character.getX() + " " + character.getY());
+      return resetCharacterPosition(); // Modifier ici
     }
 
     if (
@@ -180,6 +295,7 @@ public class WazeScreen implements Screen {
         isWall(wallLayer, portailsLayers[0], topRightX, bottomLeftY)
       )
     ) {
+      System.out.println("WALL");
       return false;
     }
 
@@ -194,6 +310,7 @@ public class WazeScreen implements Screen {
           isWall(portailsLayer, portailsLayer, topRightX, bottomLeftY)
         )
       ) {
+        System.out.println("PORTAIL");
         return false;
       }
     }
@@ -268,9 +385,20 @@ public class WazeScreen implements Screen {
 
   @Override
   public void dispose() {
+    // Libérez les ressources dans dispose()
+    characterTexture.dispose();
+    batch.dispose();
+    batchEnd.dispose();
+    font.dispose();
+    gameOverTexture.dispose();
+    pixmap.dispose();
+    textureRegion.getTexture().dispose();
+
+    if (shapeRenderer != null) {
+      shapeRenderer.dispose();
+      shapeRenderer = null; // Assurez-vous de définir shapeRenderer sur null après l'avoir libéré
+    }
+    // Ajoutez d'autres libérations de ressources si nécessaire
     game.setScreen(epitaleScreen);
-    Epitale.character = character;
-    character.setX(50 * 16);
-    character.setY(52 * 16);
   }
 }
