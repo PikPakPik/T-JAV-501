@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
-import fr.epitale.game.MenuScreen;
 
 public class SpaceInvScreen implements Screen {
     protected final Main game;
@@ -160,6 +159,5 @@ public class SpaceInvScreen implements Screen {
     @Override
     public void dispose() {
         game.setScreen(epitaleScreen);
-        Epitale.character = character;
     }
 }

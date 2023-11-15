@@ -269,8 +269,5 @@ public class WazeScreen implements Screen {
   @Override
   public void dispose() {
     game.setScreen(epitaleScreen);
-    Epitale.character = character;
-    character.setX(50 * 16);
-    character.setY(52 * 16);
   }
 }

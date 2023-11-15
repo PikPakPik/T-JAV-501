@@ -3,15 +3,9 @@ package fr.epitale.game.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Main;
@@ -19,6 +13,7 @@ import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 import fr.epitale.game.MiniGame.Waze.WazeScreen;
 
 public class Epitale extends ScreenAdapter {
+
   private final Main game;
   public static Map tiledMap;
   public static Character character;
@@ -53,14 +48,11 @@ public class Epitale extends ScreenAdapter {
     tiledMap.tiledMapRenderer.render();
     batch.setProjectionMatrix(tiledMap.camera.combined);
 
-    batch.setProjectionMatrix(tiledMap.camera.combined);
-    batch.begin();
-
     if (isCharacterVisible()) {
       batch.begin();
       batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
+      batch.end();
     }
-    batch.end();
   }
 
   private void handleInput() {
@@ -118,8 +110,9 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
       "spaceInv"
     );
-    TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
-
+    TiledMapTileLayer portails1Layer = (TiledMapTileLayer) layers.get(
+      "portails1"
+    );
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
@@ -159,18 +152,16 @@ public class Epitale extends ScreenAdapter {
     ) {
       tiledMap.tiledMap.getLayers().remove(door3Layer);
     }
+
     if (
-      endLayerJAPE != null &&
+      wallLayer != null &&
       (
-        isPressurePlate(endLayerJAPE, topLeftX, topLeftY) ||
-        isPressurePlate(endLayerJAPE, topRightX, topLeftY) ||
-        isPressurePlate(endLayerJAPE, topLeftX, bottomLeftY) ||
-        isPressurePlate(endLayerJAPE, topRightX, bottomLeftY)
+        isWall(wallLayer, portails1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, bottomLeftY)
       )
     ) {
-      tiledMap = new EpitaleMap(character);
-      character.setX(36 * 16);
-      character.setY(3 * 16);
       return false;
     }
 
@@ -209,6 +200,7 @@ public class Epitale extends ScreenAdapter {
     ) {
       return false;
     }
+
     if (
       japeLayer != null &&
       (
@@ -218,8 +210,7 @@ public class Epitale extends ScreenAdapter {
         isJape(japeLayer, topRightX, bottomLeftY)
       )
     ) {
-      WazeScreen wazeScreen = new WazeScreen(game, character, this);
-      game.setScreen(wazeScreen);
+      game.setScreen(new WazeScreen(game, character, this));
       tiledMap.tiledMap.getLayers().remove(japeLayer);
       return false;
     }
@@ -265,7 +256,7 @@ public class Epitale extends ScreenAdapter {
       ? secondlayer.getCell(x, y)
       : null;
     return cell != null || cell2 != null;
-}
+  }
 
   private boolean isPressurePlate(
     TiledMapTileLayer pressureplate1Layer,
