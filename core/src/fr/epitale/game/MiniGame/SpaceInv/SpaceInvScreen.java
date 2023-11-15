@@ -8,19 +8,22 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
+import fr.epitale.game.MenuScreen;
 
 public class SpaceInvScreen implements Screen {
     protected final Main game;
-    protected Texture backgroundTexture;
     private final OrthographicCamera camera;
     private final SpriteBatch batch;
     private final Player player;
     private final Array<Enemy> enemies;
     private boolean moveEnemiesRight = true;
     private final Epitale epitaleScreen;
+    private boolean gameOverLose = false;
+    private long gameOverStartTime;
     private Character character;
 
     public SpaceInvScreen(final Main game, Character character, Epitale epitaleScreen) {
@@ -53,6 +56,7 @@ public class SpaceInvScreen implements Screen {
         handleInput();
         moveEnemies();
         Texture backgroundTexture = new Texture("Tiles/tile_0049.png");
+        Texture gameOverTexture = new Texture("gameover.jpg");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         camera.update();
@@ -73,13 +77,25 @@ public class SpaceInvScreen implements Screen {
         player.renderPlayerProjs(batch);
         player.update(delta, enemies);
         checkCollisions();
-        if (isGameOver()) {
-            dispose();
-            return;
+
+        if (isGameOverWin()) {
+            game.setScreen(epitaleScreen);
+            Epitale.character = new Character(28 * 16, 69 * 16);
+        } else if (isGameOverLose()) {
+            if (!gameOverLose) {
+                gameOverLose = true;
+                gameOverStartTime = TimeUtils.millis();
+            }
+            long elapsedTime = TimeUtils.timeSinceMillis(gameOverStartTime);
+            if (elapsedTime > 5000) {
+                ((Main) Gdx.app.getApplicationListener()).restartGame();
+                gameOverLose = false;
+            } else {
+                batch.draw(gameOverTexture, 0, 0, 800, 600);
+            }
         }
         batch.end();
     }
-
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             player.moveLeft();
@@ -88,7 +104,6 @@ public class SpaceInvScreen implements Screen {
             player.moveRight();
         }
     }
-
     private void moveEnemies() {
         if (ChangeEnemiesDirection()) {
             for (Enemy enemy : enemies) {
@@ -97,7 +112,6 @@ public class SpaceInvScreen implements Screen {
             moveEnemiesRight = !moveEnemiesRight;
         }
     }
-
     private boolean ChangeEnemiesDirection() {
         for (Enemy enemy : enemies) {
             float enemyX = enemy.rect.x;
@@ -119,13 +133,16 @@ public class SpaceInvScreen implements Screen {
             }
         }
     }
-    private boolean isGameOver() {
+    private boolean isGameOverWin() {
+        return enemies.size == 0;
+    }
+    private boolean isGameOverLose() {
         for (Enemy enemy : enemies) {
             if (enemy.rect.y < 20) {
                 return true;
             }
         }
-        return enemies.size == 0;
+        return false;
     }
     @Override
     public void resize(int width, int height) {

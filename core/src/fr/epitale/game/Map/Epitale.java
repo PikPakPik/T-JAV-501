@@ -19,7 +19,6 @@ import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 import fr.epitale.game.MiniGame.Waze.WazeScreen;
 
 public class Epitale extends ScreenAdapter {
-
   private final Main game;
   public static Map tiledMap;
   public static Character character;
@@ -44,6 +43,7 @@ public class Epitale extends ScreenAdapter {
   public void render(float delta) {
     handleInput();
     updateCharacterPosition(0, 0);
+
     tiledMap.moveCamera();
 
     Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -53,12 +53,14 @@ public class Epitale extends ScreenAdapter {
     tiledMap.tiledMapRenderer.render();
     batch.setProjectionMatrix(tiledMap.camera.combined);
 
+    batch.setProjectionMatrix(tiledMap.camera.combined);
+    batch.begin();
+
     if (isCharacterVisible()) {
       batch.begin();
       batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-      batch.end();
     }
-    
+    batch.end();
   }
 
   private void handleInput() {
@@ -105,14 +107,6 @@ public class Epitale extends ScreenAdapter {
 
     MapLayers layers = tiledMap.tiledMap.getLayers();
     TiledMapTileLayer wallLayer = (TiledMapTileLayer) layers.get("walls");
-    TiledMapTileLayer[] portailsLayers = new TiledMapTileLayer[4];
-    TiledMapTileLayer[] pressureplateLayers = new TiledMapTileLayer[4];
-
-    for (int i = 0; i < 4; i++) {
-      portailsLayers[i] = (TiledMapTileLayer) layers.get("portails" + (i + 1));
-      pressureplateLayers[i] =
-        (TiledMapTileLayer) layers.get("pressureplate" + (i + 1));
-    }
 
     TiledMapTileLayer door1Layer = (TiledMapTileLayer) layers.get("door01");
     TiledMapTileLayer door2Layer = (TiledMapTileLayer) layers.get("door02");
@@ -125,6 +119,7 @@ public class Epitale extends ScreenAdapter {
       "spaceInv"
     );
     TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
+
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
@@ -174,58 +169,34 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap = new EpitaleMap(character);
-      character.setX(49 * 16);
-      character.setY(40 * 16);
-      TiledMapTileLayer japeLayerEpitale = (TiledMapTileLayer) tiledMap.tiledMap
-        .getLayers()
-        .get("JAPE");
-      if (japeLayerEpitale != null) {
-        tiledMap.tiledMap.getLayers().remove(japeLayerEpitale);
-      }
+      character.setX(36 * 16);
+      character.setY(3 * 16);
       return false;
     }
 
-    for (int i = 0; i < pressureplateLayers.length; i++) {
-      TiledMapTileLayer pressureplateLayer = pressureplateLayers[i];
-      if (
-        pressureplateLayer != null &&
-        (
-          isPressurePlate(pressureplateLayer, topLeftX, topLeftY) ||
-          isPressurePlate(pressureplateLayer, topRightX, topLeftY) ||
-          isPressurePlate(pressureplateLayer, topLeftX, bottomLeftY) ||
-          isPressurePlate(pressureplateLayer, topRightX, bottomLeftY)
-        )
-      ) {
-        tiledMap.tiledMap.getLayers().remove(portailsLayers[i]);
-      }
+    if(pressureplate1Layer != null &&
+      (
+        isPressurePlate(pressureplate1Layer, topLeftX, topLeftY) ||
+        isPressurePlate(pressureplate1Layer, topRightX, topLeftY) ||
+        isPressurePlate(pressureplate1Layer, topLeftX, bottomLeftY) ||
+        isPressurePlate(pressureplate1Layer, topRightX, bottomLeftY)
+      )
+    ) {
+      tiledMap.tiledMap.getLayers().remove(portails1Layer);
     }
 
     if (
       wallLayer != null &&
       (
-        isWall(wallLayer, portailsLayers[0], topLeftX, topLeftY) ||
-        isWall(wallLayer, portailsLayers[0], topRightX, topLeftY) ||
-        isWall(wallLayer, portailsLayers[0], topLeftX, bottomLeftY) ||
-        isWall(wallLayer, portailsLayers[0], topRightX, bottomLeftY)
+        isWall(wallLayer, portails1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, portails1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, portails1Layer, topRightX, bottomLeftY)
       )
     ) {
       return false;
     }
 
-    for (int i = 0; i < portailsLayers.length; i++) {
-      TiledMapTileLayer portailsLayer = portailsLayers[i];
-      if (
-        portailsLayer != null &&
-        (
-          isWall(portailsLayer, portailsLayer, topLeftX, topLeftY) ||
-          isWall(portailsLayer, portailsLayer, topRightX, topLeftY) ||
-          isWall(portailsLayer, portailsLayer, topLeftX, bottomLeftY) ||
-          isWall(portailsLayer, portailsLayer, topRightX, bottomLeftY)
-        )
-      ) {
-        return false;
-      }
-    }
     if (
       door1Layer != null &&
       (
@@ -261,7 +232,6 @@ public class Epitale extends ScreenAdapter {
     ) {
       return false;
     }
-
     if (
       japeLayer != null &&
       (
@@ -318,7 +288,7 @@ public class Epitale extends ScreenAdapter {
       ? secondlayer.getCell(x, y)
       : null;
     return cell != null || cell2 != null;
-  }
+}
 
   private boolean isPressurePlate(
     TiledMapTileLayer pressureplate1Layer,

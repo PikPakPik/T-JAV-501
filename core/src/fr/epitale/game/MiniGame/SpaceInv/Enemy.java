@@ -11,13 +11,13 @@ public class Enemy {
 
     protected Texture texture;
     protected Rectangle rect;
-    protected float speed = 100;
-    protected static final int ENEMY_ROWS = 1;
-    protected static final int ENEMY_COLS = 1;
-    protected static final float ENEMY_SPACING = 50;
+    protected float speed = 150;
+    protected static final int ENEMY_ROWS = 5;
+    protected static final int ENEMY_COLS = 15;
+    protected static final float ENEMY_SPACING = 35;
     protected Array<EnemyProj> enemyProjs;
     private float shootTimer;
-    private static final float SHOOT_INTERVAL = 0.2f;
+    private static final float SHOOT_INTERVAL = 0.1f;
 
     public Enemy(float x, float y) {
         texture = new Texture("Tiles/tile_0122.png");
@@ -73,10 +73,4 @@ public class Enemy {
         }
     }
 
-    public void dispose() {
-        texture.dispose();
-        for (EnemyProj enemyProj : enemyProjs) {
-            enemyProj.dispose();
-        }
-    }
 }
