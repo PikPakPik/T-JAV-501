@@ -174,29 +174,6 @@ public class Epitale extends ScreenAdapter {
       return false;
     }
 
-    if(pressureplate1Layer != null &&
-      (
-        isPressurePlate(pressureplate1Layer, topLeftX, topLeftY) ||
-        isPressurePlate(pressureplate1Layer, topRightX, topLeftY) ||
-        isPressurePlate(pressureplate1Layer, topLeftX, bottomLeftY) ||
-        isPressurePlate(pressureplate1Layer, topRightX, bottomLeftY)
-      )
-    ) {
-      tiledMap.tiledMap.getLayers().remove(portails1Layer);
-    }
-
-    if (
-      wallLayer != null &&
-      (
-        isWall(wallLayer, portails1Layer, topLeftX, topLeftY) ||
-        isWall(wallLayer, portails1Layer, topRightX, topLeftY) ||
-        isWall(wallLayer, portails1Layer, topLeftX, bottomLeftY) ||
-        isWall(wallLayer, portails1Layer, topRightX, bottomLeftY)
-      )
-    ) {
-      return false;
-    }
-
     if (
       door1Layer != null &&
       (
