@@ -21,10 +21,12 @@ public class SpaceInvScreen implements Screen {
     private final Array<Enemy> enemies;
     private boolean moveEnemiesRight = true;
     private final Epitale epitaleScreen;
+    private Character character;
 
-    public SpaceInvScreen(final Main game, Epitale epitaleScreen) {
+    public SpaceInvScreen(final Main game, Character character, Epitale epitaleScreen) {
         this.game = game;
         this.epitaleScreen = epitaleScreen;
+        this.character = character;
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
@@ -141,6 +143,6 @@ public class SpaceInvScreen implements Screen {
     @Override
     public void dispose() {
         game.setScreen(epitaleScreen);
-        Epitale.character = new Character(28 * 16, 69 * 16);
+        Epitale.character = character;
     }
 }

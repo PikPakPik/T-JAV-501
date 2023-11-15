@@ -3,9 +3,15 @@ package fr.epitale.game.MiniGame.Waze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Main;
@@ -16,17 +22,24 @@ import fr.epitale.game.Map.JAPEMap;
 public class WazeScreen implements Screen {
 
   private final Main game;
-  public static Character character;
+  public Character character;
   private Texture characterTexture;
   private SpriteBatch batch;
+
   private static JAPEMap japeMap;
   private final Epitale epitaleScreen;
 
-  public WazeScreen(final Main game, Epitale epitaleScreen) {
+  public WazeScreen(
+    final Main game,
+    Character character,
+    Epitale epitaleScreen
+  ) {
     this.game = game;
     this.epitaleScreen = epitaleScreen;
-    character = new Character(36 * 16, 0 * 16);
+    this.character = character;
     japeMap = new JAPEMap(character);
+    character.setX(40 * 16);
+    character.setY(2 * 16);
   }
 
   @Override
@@ -48,11 +61,39 @@ public class WazeScreen implements Screen {
     japeMap.tiledMapRenderer.render();
 
     if (isCharacterVisible()) {
+      batch.begin(); // Début de la première session de dessin
       batch.setProjectionMatrix(japeMap.camera.combined);
-      batch.begin();
       batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-      batch.end();
+
+      batch.end(); // Fin de la première session de dessin
     }
+
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    shapeRenderer.setProjectionMatrix(japeMap.camera.combined);
+
+    // Définir la largeur de ligne
+    Gdx.gl.glLineWidth(20f); // Remplacez 3f par la largeur de ligne souhaitée
+
+    // Dessiner un grand nombre de cercles concentriques pour simuler un effet de vision
+    int initialRadius = Math.max(
+      Gdx.graphics.getWidth(),
+      Gdx.graphics.getHeight()
+    );
+    for (int radius = initialRadius; radius > 50; radius -= 1) { // Arrêter de dessiner des cercles lorsque le rayon atteint 200
+      shapeRenderer.begin(ShapeType.Line);
+      shapeRenderer.setColor(new Color(0, 0, 0, 0.1f));
+      shapeRenderer.circle(character.getX() + 8, character.getY() + 8, radius);
+      shapeRenderer.end();
+    }
+    Pixmap pixmap = new Pixmap(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Pixmap.Format.RGBA8888);
+    pixmap.setColor(new Color(0, 0, 0, 0.5f));
+    pixmap.fill();
+
+    TextureRegion textureRegion = new TextureRegion(new Texture(pixmap));
+
+    batch.begin();
+    batch.draw(textureRegion, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    batch.end();
   }
 
   private void handleInput() {
@@ -171,18 +212,6 @@ public class WazeScreen implements Screen {
     return cell != null;
   }
 
-  private boolean isKey1(TiledMapTileLayer key1Layer, int x, int y) {
-    return isCellNotNull(key1Layer, x, y);
-  }
-
-  private boolean isKey2(TiledMapTileLayer key2Layer, int x, int y) {
-    return isCellNotNull(key2Layer, x, y);
-  }
-
-  private boolean isKey3(TiledMapTileLayer key3Layer, int x, int y) {
-    return isCellNotNull(key3Layer, x, y);
-  }
-
   private boolean isWall(
     TiledMapTileLayer wallLayer,
     TiledMapTileLayer secondlayer,
@@ -205,14 +234,6 @@ public class WazeScreen implements Screen {
       ? pressureplate1Layer.getCell(x, y)
       : null;
     return cell != null;
-  }
-
-  private boolean isJape(TiledMapTileLayer japeLayer, int x, int y) {
-    return isCellNotNull(japeLayer, x, y);
-  }
-
-  private boolean isSpaceInv(TiledMapTileLayer spaceInvLayer, int x, int y) {
-    return isCellNotNull(spaceInvLayer, x, y);
   }
 
   private boolean isCharacterVisible() {
@@ -248,5 +269,8 @@ public class WazeScreen implements Screen {
   @Override
   public void dispose() {
     game.setScreen(epitaleScreen);
+    Epitale.character = character;
+    character.setX(50 * 16);
+    character.setY(52 * 16);
   }
 }
