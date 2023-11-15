@@ -264,9 +264,6 @@
   <image width="16" height="16" source="Tiles/tile_0097.png"/>
  </tile>
  <tile id="43">
-  <properties>
-   <property name="wall" type="bool" value="false"/>
-  </properties>
   <image width="16" height="16" source="Tiles/tile_0098.png"/>
  </tile>
  <tile id="44">
@@ -295,25 +292,25 @@
  </tile>
  <tile id="48">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0103.png"/>
  </tile>
  <tile id="49">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0104.png"/>
  </tile>
  <tile id="50">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0105.png"/>
  </tile>
  <tile id="51">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0106.png"/>
  </tile>
@@ -331,7 +328,7 @@
  </tile>
  <tile id="54">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0109.png"/>
  </tile>
@@ -385,31 +382,31 @@
  </tile>
  <tile id="63">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0118.png"/>
  </tile>
  <tile id="64">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0119.png"/>
  </tile>
  <tile id="65">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0120.png"/>
  </tile>
  <tile id="66">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0121.png"/>
  </tile>
  <tile id="67">
   <properties>
-   <property name="wall" type="bool" value="false"/>
+   <property name="damage" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0122.png"/>
  </tile>
