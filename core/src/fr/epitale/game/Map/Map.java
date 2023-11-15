@@ -11,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public abstract class Map implements Screen {
-
   public OrthographicCamera camera;
   public TiledMap tiledMap;
   public Character character;
