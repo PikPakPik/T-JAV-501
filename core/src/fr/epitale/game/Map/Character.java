@@ -37,4 +37,13 @@ public class Character {
     public void setY(float newY) {
         this.y = newY;
     }
+
+    public boolean isVisible() {
+        return this.isVisible;
+    }
+
+    public void setPos(float newX, float newY) {
+        this.x = newX;
+        this.y = newY;
+    }
 }
