@@ -1,6 +1,6 @@
 package fr.epitale.game.Map;
 
-public class Character {
+public class Character  {
     private float x;
     private float y;
     private final boolean isVisible;

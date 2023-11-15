@@ -8,9 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import fr.epitale.game.Background;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
+import fr.epitale.game.PauseMenuScreen;
+
 import fr.epitale.game.MiniGame.Waze.WazeScreen;
+
 
 public class Epitale extends ScreenAdapter {
 
@@ -20,10 +24,15 @@ public class Epitale extends ScreenAdapter {
   private Texture characterTexture;
   public static SpriteBatch batch;
   private static EpitaleMap epitaleMap;
+  private boolean isPaused = false;
+  private PauseMenuScreen pauseMenuScreen;
+  Background background;
 
   public Epitale(final Main game) {
     this.game = game;
     character = new Character(34 * 16, 3 * 16);
+    background = new Background();
+    background.create();
     epitaleMap = new EpitaleMap(character);
   }
 
@@ -32,21 +41,36 @@ public class Epitale extends ScreenAdapter {
     tiledMap = epitaleMap;
     characterTexture = new Texture("Tiles/tile_0085.png");
     batch = new SpriteBatch();
+    pauseMenuScreen = new PauseMenuScreen(game, background);
   }
 
   @Override
   public void render(float delta) {
-    handleInput();
-    updateCharacterPosition(0, 0);
+    if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+      isPaused = !isPaused;
 
-    tiledMap.moveCamera();
+      if (isPaused) {
+        game.setPreviousScreen(this);
+        game.setPreviousInputProcessor(Gdx.input.getInputProcessor());
+        game.setScreen(pauseMenuScreen);
+      } else {
+        game.setScreen(this);
+        Gdx.input.setInputProcessor(null);
+      }
+    }
 
-    Gdx.gl.glClearColor(0, 0, 0, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    if (!isPaused) {
+      handleInput();
+      updateCharacterPosition(0, 0);
 
-    tiledMap.tiledMapRenderer.setView(tiledMap.camera);
-    tiledMap.tiledMapRenderer.render();
-    batch.setProjectionMatrix(tiledMap.camera.combined);
+      tiledMap.moveCamera();
+
+      Gdx.gl.glClearColor(0, 0, 0, 1);
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+      tiledMap.tiledMapRenderer.setView(tiledMap.camera);
+      tiledMap.tiledMapRenderer.render();
+
+      batch.setProjectionMatrix(tiledMap.camera.combined);
 
     if (isCharacterVisible()) {
       batch.begin();
