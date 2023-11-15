@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
+import fr.epitale.game.MiniGame.Waze.WazeScreen;
 
 public class Epitale extends ScreenAdapter {
 
@@ -248,9 +249,7 @@ public class Epitale extends ScreenAdapter {
         isJape(japeLayer, topRightX, bottomLeftY)
       )
     ) {
-      tiledMap = new JAPEMap(character);
-      character.setX(34 * 16);
-      character.setY(3 * 16);
+      game.setScreen(new WazeScreen(game, this));
       return false;
     }
 
