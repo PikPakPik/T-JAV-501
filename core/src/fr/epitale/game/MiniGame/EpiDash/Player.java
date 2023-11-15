@@ -3,19 +3,26 @@ package fr.epitale.game.MiniGame.EpiDash;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Sprite {
     private Vector2 velocity = new Vector2();
+    ShapeRenderer shapeRenderer;
     private float speed = 40 * 2, gravity = 70 * 1.5f;
     private TiledMapTileLayer collisionLayer;
-    public boolean die = false;
+    public boolean die = false,win=false,pause=false;
+    
+
 
     public Player(Sprite sprite, TiledMapTileLayer collisionLayer) {
         super(sprite);
-        setSize(sprite.getWidth() - 5, sprite.getHeight() - 5);
+        setSize(sprite.getWidth() - 6, sprite.getHeight() - 6);
+        shapeRenderer = new ShapeRenderer();
+
         this.collisionLayer = collisionLayer;
     }
 
@@ -41,6 +48,7 @@ public class Player extends Sprite {
                     die = true;
                 }
                 collisionX = cell.getTile().getProperties().containsKey("damage");
+
                 if (collisionX) {
                     die = true;
                 }
@@ -219,6 +227,12 @@ public class Player extends Sprite {
         }
 
     }
+    public void stopMoving(){
+        velocity.x = 0;
+        velocity.y = 0;
+        pause = true;
+    }
+    
 
     @Override
     public void draw(Batch spriteBatch) {

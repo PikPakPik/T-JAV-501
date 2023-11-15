@@ -61,16 +61,19 @@ public class EpiDash implements Screen {
         renderer.getBatch().begin();
         player.draw(renderer.getBatch());
         if (player.die) {
-            player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
-            player.die = false;
+            player.stopMoving();
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                player.die = false;
+                player.pause = false;
+                player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
+            }
         }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            player.moveLeft();
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+        if (!player.pause) {
             player.moveRight();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && player.isGrounded()) {
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && player.isGrounded() && !player.die) {
             player.jump();
 
         }
