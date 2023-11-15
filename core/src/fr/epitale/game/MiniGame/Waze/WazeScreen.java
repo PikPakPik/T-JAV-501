@@ -86,7 +86,7 @@ public class WazeScreen implements Screen {
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     shapeRenderer.setProjectionMatrix(japeMap.camera.combined);
 
-    Gdx.gl.glLineWidth(20f);
+    Gdx.gl.glLineWidth(15f);
 
     int initialRadius = Math.max(
       Gdx.graphics.getWidth(),
@@ -121,9 +121,15 @@ public class WazeScreen implements Screen {
     // Afficher le temps restant
     batchEnd.begin();
     font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
-    font.getData().setScale(2, 2); // Augmente la taille de la police par un facteur de 2
-    if(minutes == 0 && seconds < 30) {
+    font.getData().setScale(4, 4); // Augmente la taille de la police par un facteur de 2
+    if(seconds < 10) {
+      seconds = 0 + seconds;
+    } 
+    if(minutes == 2 && seconds < 50) {
       font.setColor(Color.RED);
+    } else
+    if(minutes == 0 && seconds < 60) {
+      font.setColor(Color.ORANGE);
     }
 
     if (timeRemaining <= 0) {
