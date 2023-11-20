@@ -1,21 +1,27 @@
 package fr.epitale.game.Map;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public abstract class Map implements Screen {
-  protected OrthographicCamera camera;
-  protected TiledMap tiledMap;
-  protected BatchTiledMapRenderer tiledMapRenderer;
+  public OrthographicCamera camera;
+  public TiledMap tiledMap;
+  public Character character;
+  public BatchTiledMapRenderer tiledMapRenderer;
+  public static SpriteBatch batch = new SpriteBatch();
   float zoomFactor = 0.3f;
 
   public Map(String map, Character character) {
     int windowWidth = 1280;
     int windowHeight = 720;
+    this.character = character;
     tiledMap = new TmxMapLoader().load(map);
     tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
     camera = new OrthographicCamera();
@@ -31,15 +37,11 @@ public abstract class Map implements Screen {
   public void show() {}
 
   public void updateZoomFactor(float zoomFactor) {
-    camera.setToOrtho(
-      false,
-      1280 * zoomFactor,
-      720 * zoomFactor
-    );
+    camera.setToOrtho(false, 1280 * zoomFactor, 720 * zoomFactor);
   }
 
   public void moveCamera() {
-    camera.position.set(Epitale.character.getX(), Epitale.character.getY(), 0);
+    camera.position.set(character.getX(), character.getY(), 0);
     camera.update();
   }
 

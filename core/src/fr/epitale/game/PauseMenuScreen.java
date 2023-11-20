@@ -55,7 +55,7 @@ public class PauseMenuScreen implements Screen {
             }
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                    Gdx.app.exit();
+                Gdx.app.exit();
             }
 
         }.init(myExitBtn));

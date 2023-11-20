@@ -1,6 +1,6 @@
 package fr.epitale.game.Map;
 
-public class Character {
+public class Character  {
     private float x;
     private float y;
     private final boolean isVisible;
@@ -10,7 +10,7 @@ public class Character {
         this.x = initialX;
         this.y = initialY;
         this.isVisible = true;
-        this.speed = 5f;
+        this.speed = 1f;
     }
 
     public void move(float deltaX, float deltaY) {
