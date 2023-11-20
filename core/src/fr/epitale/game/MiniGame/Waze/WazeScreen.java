@@ -61,7 +61,7 @@ public class WazeScreen implements Screen {
     japeMap = new JAPEMap(character);
     character.setX(40 * 16);
     character.setY(2 * 16);
-    timeRemaining = 60f;
+    timeRemaining = 300f;
     // Initialiser la police pour afficher le temps restant
     batch = new SpriteBatch();
     batchEnd = new SpriteBatch();
