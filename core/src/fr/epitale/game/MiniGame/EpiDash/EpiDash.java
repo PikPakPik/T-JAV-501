@@ -1,8 +1,5 @@
 package fr.epitale.game.MiniGame.EpiDash;
 
-import java.security.Key;
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -192,10 +189,6 @@ public class EpiDash implements Screen {
         return player.win;
     }
 
-    private boolean isGameOverLose() {
-        return player.die;
-    }
-
     @Override
     public void resize(int width, int height) {
         camera.viewportWidth = width;
@@ -205,24 +198,20 @@ public class EpiDash implements Screen {
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
         map.dispose();
         renderer.dispose();
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
         dispose();
     }
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
     }
 }

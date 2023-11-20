@@ -48,9 +48,7 @@ public class PauseMenuScreen implements Screen {
         myExitBtn.setPosition((float) (Gdx.graphics.getWidth() - EXIT_BUTTON_WIDTH) / 2, (float) (Gdx.graphics.getHeight() - EXIT_BUTTON_Y) / 2 + EXIT_BUTTON_Y);
         myExitBtn.setSize(EXIT_BUTTON_WIDTH, EXIT_BUTTON_HEIGHT);
         myExitBtn.addListener(new ClickListener() {
-            ImageButton myExitBtn;
             public ClickListener init(ImageButton myExitBtn) {
-                this.myExitBtn = myExitBtn;
                 return this;
             }
             @Override

@@ -4,9 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import fr.epitale.game.Map.Epitale;
-import fr.epitale.game.MiniGame.EpiDash.EpiDash;
-import fr.epitale.game.Map.Character;
 
 public class Main extends Game {
 	public static final int WIDTH = 1280;
