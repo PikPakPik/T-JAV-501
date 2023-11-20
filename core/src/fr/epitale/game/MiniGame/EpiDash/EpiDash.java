@@ -42,6 +42,7 @@ public class EpiDash implements Screen {
     int stringIndex = 0;
     String messageRestart = "";
     Texture gameBg = new Texture("Epidash_Background.jpg");
+    Texture guyToTalkWith = new Texture("Tiles/tile_0097.png");
 
     private Long gameOverStartTime;
     Character character;
@@ -68,8 +69,7 @@ public class EpiDash implements Screen {
 
         player = new Player(new Sprite(new Texture("tiles/tile_0085.png")),
                 (TiledMapTileLayer) map.getLayers().get(0));
-        player.setPosition(135 * 16, 28 * 16);
-        // player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
+        player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
         player.pause = true;
     }
 
@@ -96,9 +96,7 @@ public class EpiDash implements Screen {
             if (player.health > 0 && player.die) {
                 player.health--;
                 player.die = false;
-                player.setPosition(135 * 16, 28 * 16);
-
-                // player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
+                player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
             }
 
             if (isGameOverWin()) {
@@ -112,12 +110,12 @@ public class EpiDash implements Screen {
             player.moveRight();
 
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && player.health > 0) {
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && player.health > 0 && !player.talkToGuy) {
             player.pause = false;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && player.isGrounded() && !player.die && !player.pause
-                && player.health > 0) {
+                && player.health > 0 && !player.talkToGuy) {
             player.jump();
 
         }
@@ -126,8 +124,9 @@ public class EpiDash implements Screen {
 
         batch.begin();
         if (player.pause) {
-            pauseFont.draw(batch, "Press 'Enter Button' to start", Gdx.graphics.getWidth() / 2 - ,
+            pauseFont.draw(batch, "Press 'Enter Button' to start", Gdx.graphics.getWidth() / 2 - 200,
                     Gdx.graphics.getHeight() / 2);
+
             pauseFont.getData().setScale(4, 4);
             pauseFont.setColor(0, 0, 0, 1);
         }
@@ -138,6 +137,8 @@ public class EpiDash implements Screen {
         if (player.talkToGuy) {
             batch.begin();
             batch.draw(gameBg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            batch.draw(guyToTalkWith, (Gdx.graphics.getWidth() - 200) / 2,
+                    Gdx.graphics.getHeight() / 2 + 100, 200, 200);
             String text = "Hello, are you lost?\nYou are going in the wrong way!!!\nYou can reach the Epitech building and finish this game\nby going through the door.\nGood luck!!!";
             time += Gdx.graphics.getDeltaTime();
             if (time >= 0.04f && stringIndex < text.length() && messageRestart != text) {
@@ -151,7 +152,7 @@ public class EpiDash implements Screen {
                 player.talkToGuy = false;
             }
 
-            restartFont.draw(batch, messageRestart, Gdx.graphics.getWidth() / 2 - 100,
+            restartFont.draw(batch, messageRestart, Gdx.graphics.getWidth() / 3,
                     Gdx.graphics.getHeight() / 2);
             restartFont.getData().setScale(3, 3);
             restartFont.setColor(1, 1, 1, 1);
