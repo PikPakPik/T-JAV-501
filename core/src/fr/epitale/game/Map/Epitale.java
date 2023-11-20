@@ -13,7 +13,7 @@ import fr.epitale.game.EndScreen;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.EpiDash.EpiDash;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
-import fr.epitale.game.MiniGame.Waze.WazeScreen;
+import fr.epitale.game.MiniGame.Waze.MazeScreen;
 import fr.epitale.game.PauseMenuScreen;
 
 public class Epitale extends ScreenAdapter {
@@ -291,7 +291,7 @@ public class Epitale extends ScreenAdapter {
         isJape(japeLayer, topRightX, bottomLeftY)
       )
     ) {
-      game.setScreen(new WazeScreen(game, character, this));
+      game.setScreen(new MazeScreen(game, character, this));
       tiledMap.tiledMap.getLayers().remove(japeLayer);
       return false;
     }

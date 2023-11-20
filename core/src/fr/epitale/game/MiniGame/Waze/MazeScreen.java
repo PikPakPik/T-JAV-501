@@ -19,9 +19,9 @@ import com.badlogic.gdx.utils.Timer;
 import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
-import fr.epitale.game.Map.JAPEMap;
+import fr.epitale.game.Map.MazeMap;
 
-public class WazeScreen implements Screen {
+public class MazeScreen implements Screen {
 
   private final Main game;
   public Character character;
@@ -33,7 +33,7 @@ public class WazeScreen implements Screen {
 
   private boolean gameOverLose = false;
   private long gameOverStartTime;
-  private static JAPEMap japeMap;
+  private static MazeMap japeMap;
   private final Epitale epitaleScreen;
 
   private Texture gameOverTexture;
@@ -49,7 +49,7 @@ public class WazeScreen implements Screen {
   };
   private Timer hurryUpTimer = new Timer();
 
-  public WazeScreen(
+  public MazeScreen(
     final Main game,
     Character character,
     Epitale epitaleScreen
@@ -57,7 +57,7 @@ public class WazeScreen implements Screen {
     this.game = game;
     this.epitaleScreen = epitaleScreen;
     this.character = character;
-    japeMap = new JAPEMap(character);
+    japeMap = new MazeMap(character);
     character.setX(40 * 16);
     character.setY(2 * 16);
     timeRemaining = 300f;
