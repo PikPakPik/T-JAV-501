@@ -94,21 +94,27 @@ public class Epitale extends ScreenAdapter {
       batch.end();
       if (fading) {
         if (alpha < 1.0f) {
-            alpha += delta; // Ajustez ce facteur en fonction de la vitesse du fondu souhaitée
-            if (alpha > 1.0f) {
-                alpha = 1.0f;
-                // Changer d'écran ici
-                game.setScreen(new EndScreen(game));
-            }
+          alpha += delta; // Ajustez ce facteur en fonction de la vitesse du fondu souhaitée
+          if (alpha > 1.0f) {
+            alpha = 1.0f;
+            // Changer d'écran ici
+            game.setScreen(new EndScreen(game));
+          }
         }
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         batch.begin();
         batch.setColor(1, 1, 1, alpha);
-        batch.draw(fadeTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(
+          fadeTexture,
+          0,
+          0,
+          Gdx.graphics.getWidth(),
+          Gdx.graphics.getHeight()
+        );
         batch.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-    }
+      }
     }
   }
 
@@ -166,7 +172,9 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
     TiledMapTileLayer endGameLayer = (TiledMapTileLayer) layers.get("endGame");
     TiledMapTileLayer epidashLayer = (TiledMapTileLayer) layers.get("epiDash");
-    TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get("spaceInv");
+    TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
+      "spaceInv"
+    );
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
@@ -200,7 +208,7 @@ public class Epitale extends ScreenAdapter {
     if (
       key3Layer != null &&
       (
-        isKey3(key1Layer, topLeftX, topLeftY) ||
+        isKey3(key3Layer, topLeftX, topLeftY) ||
         isKey3(key3Layer, topRightX, topLeftY) ||
         isKey3(key3Layer, topLeftX, bottomLeftY) ||
         isKey3(key3Layer, topRightX, bottomLeftY)
@@ -246,13 +254,26 @@ public class Epitale extends ScreenAdapter {
       return false;
     }
 
+    if(wallLayer != null && (
+      isWall(wallLayer, null, topLeftX, topLeftY) ||
+      isWall(wallLayer, null, topRightX, topLeftY) ||
+      isWall(wallLayer, null, topLeftX, bottomLeftY) ||
+      isWall(wallLayer, null, topRightX, bottomLeftY)
+    )) {
+      return false;
+    }
+
     if (
       endGameLayer != null &&
       (
-        isWall(endGameLayer, endGameLayer, topLeftX, topLeftY) && !fading ||
-        isWall(endGameLayer, endGameLayer, topRightX, topLeftY) && !fading ||
-        isWall(endGameLayer, endGameLayer, topLeftX, bottomLeftY) && !fading ||
-        isWall(endGameLayer, endGameLayer, topRightX, bottomLeftY) && !fading
+        isWall(endGameLayer, endGameLayer, topLeftX, topLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, topLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topLeftX, bottomLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, bottomLeftY) &&
+        !fading
       )
     ) {
       startFading();
