@@ -3,6 +3,7 @@ package fr.epitale.game.MiniGame.Waze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -41,6 +42,8 @@ public class MazeScreen implements Screen {
   private Pixmap pixmap;
   private TextureRegion textureRegion;
   private boolean hurryUp = false;
+  private Music gameOverMusic;
+  private Music mazeMusic;
   private Timer.Task hurryUpTask = new Timer.Task() {
     @Override
     public void run() {
@@ -76,6 +79,9 @@ public class MazeScreen implements Screen {
     pixmap.setColor(new Color(0, 0, 0, 0.5f));
     pixmap.fill();
     textureRegion = new TextureRegion(new Texture(pixmap));
+    mazeMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Maze/maze.mp3"));
+    mazeMusic.setLooping(true);
+    mazeMusic.play();
   }
 
   @Override
@@ -117,7 +123,7 @@ public class MazeScreen implements Screen {
       Gdx.graphics.getWidth(),
       Gdx.graphics.getHeight()
     );
-    for (int radius = initialRadius; radius > 100; radius -= 1) {
+    for (int radius = initialRadius; radius > 50; radius -= 1) {
       shapeRenderer.setColor(new Color(0, 0, 0, 0.1f));
       shapeRenderer.circle(character.getX() + 8, character.getY() + 8, radius);
     }
@@ -174,6 +180,9 @@ public class MazeScreen implements Screen {
         ((Main) Gdx.app.getApplicationListener()).restartGame();
         gameOverLose = false;
       } else {
+        mazeMusic.stop();
+        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/lose.mp3"));
+        gameOverMusic.play();
         batchEnd.draw(
           gameOverTexture,
           0,
@@ -279,6 +288,21 @@ public class MazeScreen implements Screen {
         isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
       )
     ) {
+      Music trapMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Maze/touch_trap.mp3"));
+      trapMusic.play();
+      trapMusic.setPosition(0.5f);
+      trapMusic.setVolume(1);
+      mazeMusic.pause();
+      Timer.schedule(
+        new Timer.Task() {
+          @Override
+          public void run() {
+            mazeMusic.play();
+          }
+        },
+        0.5f
+      );
+      timeRemaining -= 10;
       return resetCharacterPosition();
     }
 

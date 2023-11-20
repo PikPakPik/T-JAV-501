@@ -3,6 +3,7 @@ package fr.epitale.game.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,6 +31,9 @@ public class Epitale extends ScreenAdapter {
   private float alpha = 0.0f;
   private boolean fading = false;
   private Texture fadeTexture; // Assurez-vous d'initialiser cette texture.
+  private Music music = Gdx.audio.newMusic(
+    Gdx.files.internal("Sound/game.mp3")
+  );
 
   private void startFading() {
     fading = true;
@@ -44,6 +48,8 @@ public class Epitale extends ScreenAdapter {
     background.create();
     epitaleMap = new EpitaleMap(character);
     fadeTexture = new Texture("fade.png");
+    music.setLooping(true);
+    music.play();
   }
 
   @Override
@@ -61,6 +67,7 @@ public class Epitale extends ScreenAdapter {
       isPaused = !isPaused;
 
       if (isPaused) {
+        music.pause();
         game.setPreviousScreen(this);
         game.setPreviousInputProcessor(Gdx.input.getInputProcessor());
         game.setScreen(pauseMenuScreen);
@@ -71,6 +78,7 @@ public class Epitale extends ScreenAdapter {
     }
 
     if (!isPaused) {
+      music.play();
       handleInput();
       updateCharacterPosition(0, 0);
 
@@ -195,7 +203,6 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door1Layer);
-
     }
     if (
       key2Layer != null &&
@@ -256,12 +263,15 @@ public class Epitale extends ScreenAdapter {
       return false;
     }
 
-    if(wallLayer != null && (
-      isWall(wallLayer, null, topLeftX, topLeftY) ||
-      isWall(wallLayer, null, topRightX, topLeftY) ||
-      isWall(wallLayer, null, topLeftX, bottomLeftY) ||
-      isWall(wallLayer, null, topRightX, bottomLeftY)
-    )) {
+    if (
+      wallLayer != null &&
+      (
+        isWall(wallLayer, null, topLeftX, topLeftY) ||
+        isWall(wallLayer, null, topRightX, topLeftY) ||
+        isWall(wallLayer, null, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, null, topRightX, bottomLeftY)
+      )
+    ) {
       return false;
     }
 
@@ -278,6 +288,7 @@ public class Epitale extends ScreenAdapter {
         !fading
       )
     ) {
+      music.stop();
       startFading();
       return true;
     }
@@ -291,6 +302,7 @@ public class Epitale extends ScreenAdapter {
         isJape(japeLayer, topRightX, bottomLeftY)
       )
     ) {
+      music.pause();
       game.setScreen(new MazeScreen(game, character, this));
       tiledMap.tiledMap.getLayers().remove(japeLayer);
       return false;
@@ -302,15 +314,19 @@ public class Epitale extends ScreenAdapter {
       isSpaceInv(spaceInvLayer, topLeftX, bottomLeftY) ||
       isSpaceInv(spaceInvLayer, topRightX, bottomLeftY)
     ) {
+      music.pause();
       SpaceInvScreen spaceInvScreen = new SpaceInvScreen(game, character, this);
       game.setScreen(spaceInvScreen);
       tiledMap.tiledMap.getLayers().remove(spaceInvLayer);
     }
 
-    if (isEpiDash(epiDashLayer, topLeftX, topLeftY) ||
-        isEpiDash(epiDashLayer, topRightX, topLeftY) ||
-        isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
-        isEpiDash(epiDashLayer, topRightX, bottomLeftY)) {
+    if (
+      isEpiDash(epiDashLayer, topLeftX, topLeftY) ||
+      isEpiDash(epiDashLayer, topRightX, topLeftY) ||
+      isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
+      isEpiDash(epiDashLayer, topRightX, bottomLeftY)
+    ) {
+      music.pause();
       game.setScreen(new EpiDash(game, character, this));
       tiledMap.tiledMap.getLayers().remove(epiDashLayer);
     }

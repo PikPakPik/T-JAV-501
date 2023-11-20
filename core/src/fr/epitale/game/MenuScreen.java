@@ -3,6 +3,7 @@ package fr.epitale.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -34,6 +35,7 @@ public class MenuScreen implements Screen {
     Texture playButtonHover;
     Texture exitButtonHover;
     Background background;
+    Music menuMusic;
 
     private Stage stage;
 
@@ -50,7 +52,8 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         playBtnLogicV2();
         exitBtnLogic();
-
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/intro.mp3"));
+        menuMusic.play();
     }
 
     public void playBtnLogicV2() {
@@ -189,7 +192,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
+        menuMusic.dispose();
     }
 
 }
