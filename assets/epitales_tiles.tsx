@@ -736,6 +736,7 @@
  </tile>
  <tile id="122">
   <properties>
+   <property name="door" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0045.png"/>
