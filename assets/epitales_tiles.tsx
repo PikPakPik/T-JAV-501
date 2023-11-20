@@ -259,6 +259,7 @@
  </tile>
  <tile id="42">
   <properties>
+   <property name="guyToRestart" type="bool" value="false"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
   <image width="16" height="16" source="Tiles/tile_0097.png"/>
