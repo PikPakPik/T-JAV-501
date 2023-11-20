@@ -11,10 +11,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Background;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
-import fr.epitale.game.PauseMenuScreen;
-
 import fr.epitale.game.MiniGame.Waze.WazeScreen;
-
+import fr.epitale.game.PauseMenuScreen;
 
 public class Epitale extends ScreenAdapter {
 
@@ -72,10 +70,17 @@ public class Epitale extends ScreenAdapter {
 
       batch.setProjectionMatrix(tiledMap.camera.combined);
 
-    if (isCharacterVisible()) {
-      batch.begin();
-      batch.draw(characterTexture, character.getX(), character.getY(), 16, 16);
-      batch.end();
+      if (isCharacterVisible()) {
+        batch.begin();
+        batch.draw(
+          characterTexture,
+          character.getX(),
+          character.getY(),
+          16,
+          16
+        );
+        batch.end();
+      }
     }
   }
 
@@ -133,6 +138,9 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
       "spaceInv"
+    );
+    TiledMapTileLayer epiDashLayer = (TiledMapTileLayer) layers.get(
+      "epiDash"
     );
     TiledMapTileLayer portails1Layer = (TiledMapTileLayer) layers.get(
       "portails1"
@@ -249,6 +257,16 @@ public class Epitale extends ScreenAdapter {
       game.setScreen(spaceInvScreen);
       tiledMap.tiledMap.getLayers().remove(spaceInvLayer);
     }
+
+    if (
+      isEpiDash(epiDashLayer, topLeftX, topLeftY) ||
+      isEpiDash(epiDashLayer, topRightX, topLeftY) ||
+      isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
+      isEpiDash(epiDashLayer, topRightX, bottomLeftY)
+    ) {
+      //game.setScreen(new EpiDash(game, character, this));
+      tiledMap.tiledMap.getLayers().remove(epiDashLayer);
+    }
     return true;
   }
 
@@ -288,6 +306,10 @@ public class Epitale extends ScreenAdapter {
 
   private boolean isSpaceInv(TiledMapTileLayer spaceInvLayer, int x, int y) {
     return isCellNotNull(spaceInvLayer, x, y);
+  }
+
+   private boolean isEpiDash(TiledMapTileLayer epiDashLayer, int x, int y) {
+    return isCellNotNull(epiDashLayer, x, y);
   }
 
   private boolean isCharacterVisible() {
