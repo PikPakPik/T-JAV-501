@@ -18,12 +18,10 @@ public class Main extends Game {
 
 	@Override
 	public void create() {
-		// batch = new SpriteBatch();
-		// background = new Background();
-		// background.create();
-		// this.setScreen(new MenuScreen(this, background));
-		setScreen(new EpiDash(this, new Character(0, 0), new Epitale(this)));
-
+		batch = new SpriteBatch();
+		background = new Background();
+		background.create();
+		this.setScreen(new MenuScreen(this, background));
 	}
 
 	public void restartGame() {
