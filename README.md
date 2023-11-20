@@ -3,7 +3,7 @@ _Jeu développé avec LibGDX dans le cadre du projet java à Epitech._
 
 ## Description
 
-Le but de ce projet est de créer un jeu de style 2D avec comme principal objectif d'inclure de la POO dans l'architecture du projet. Notre jeu est tiré d'un jeu réel nommé "Undertale" qui est un jeu où le joueur doit combattre des boss afin d'accèder à la clé qui ouvrira les autre portes de la carte, s'il perd il recommence le jeu à zéro.
+Le but de ce projet est de créer un jeu de style 2D avec comme principal objectif d'inclure de la POO dans l'architecture du projet. Notre jeu est tiré d'un jeu réel nommé "Undertale" qui est un jeu où le joueur doit combattre des boss afin d'accéder à la clé qui ouvrira les autres portes de la carte, s'il perd il recommence le jeu à zéro.
 
 ## Type de boss
 

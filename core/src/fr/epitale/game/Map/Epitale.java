@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Background;
+import fr.epitale.game.EndScreen;
 import fr.epitale.game.Main;
 import fr.epitale.game.MiniGame.EpiDash.EpiDash;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
@@ -26,6 +27,14 @@ public class Epitale extends ScreenAdapter {
   private boolean isPaused = false;
   private PauseMenuScreen pauseMenuScreen;
   Background background;
+  private float alpha = 0.0f;
+  private boolean fading = false;
+  private Texture fadeTexture; // Assurez-vous d'initialiser cette texture.
+
+  private void startFading() {
+    fading = true;
+    alpha = 0.0f;
+  }
 
   public Epitale(final Main game) {
     this.game = game;
@@ -34,6 +43,7 @@ public class Epitale extends ScreenAdapter {
     background = new Background();
     background.create();
     epitaleMap = new EpitaleMap(character);
+    fadeTexture = new Texture("fade.png");
   }
 
   @Override
@@ -46,6 +56,7 @@ public class Epitale extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
+    tiledMap.character = character;
     if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
       isPaused = !isPaused;
 
@@ -74,15 +85,38 @@ public class Epitale extends ScreenAdapter {
       batch.setProjectionMatrix(tiledMap.camera.combined);
 
       if (isCharacterVisible()) {
-
         batch.draw(
-            characterTexture,
-            character.getX(),
-            character.getY(),
-            16,
-            16);
+          characterTexture,
+          character.getX(),
+          character.getY(),
+          16,
+          16
+        );
       }
       batch.end();
+      if (fading) {
+        if (alpha < 1.0f) {
+          alpha += delta; // Ajustez ce facteur en fonction de la vitesse du fondu souhaitée
+          if (alpha > 1.0f) {
+            alpha = 1.0f;
+            // Changer d'écran ici
+            game.setScreen(new EndScreen(game));
+          }
+        }
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        batch.begin();
+        batch.setColor(1, 1, 1, alpha);
+        batch.draw(
+          fadeTexture,
+          0,
+          0,
+          Gdx.graphics.getWidth(),
+          Gdx.graphics.getHeight()
+        );
+        batch.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+      }
     }
   }
 
@@ -119,8 +153,10 @@ public class Epitale extends ScreenAdapter {
   }
 
   private boolean isValidMove(float newX, float newY) {
-    int mapWidth = tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
-    int mapHeight = tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
+    int mapWidth =
+      tiledMap.tiledMap.getProperties().get("width", Integer.class) * 16;
+    int mapHeight =
+      tiledMap.tiledMap.getProperties().get("height", Integer.class) * 16;
 
     if (newX < 0 || newX + 16 > mapWidth || newY < 0 || newY + 16 > mapHeight) {
       return false;
@@ -136,76 +172,136 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer key2Layer = (TiledMapTileLayer) layers.get("key02");
     TiledMapTileLayer key3Layer = (TiledMapTileLayer) layers.get("key03");
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
-    TiledMapTileLayer epiDashLayer = (TiledMapTileLayer) layers.get("epiDash");
+
+    TiledMapTileLayer endGameLayer = (TiledMapTileLayer) layers.get("endGame");
+    TiledMapTileLayer epidashLayer = (TiledMapTileLayer) layers.get("epiDash");
+
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
-        "spaceInv");
-    TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
+      "spaceInv"
+    );
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
     int topRightX = (int) ((newX + 14) / 16);
     int bottomLeftY = (int) (newY / 16);
 
-    if (key1Layer != null &&
-        (isKey1(key1Layer, topLeftX, topLeftY) ||
-            isKey1(key1Layer, topRightX, topLeftY) ||
-            isKey1(key1Layer, topLeftX, bottomLeftY) ||
-            isKey1(key1Layer, topRightX, bottomLeftY))) {
+    if (
+      key1Layer != null &&
+      (
+        isKey1(key1Layer, topLeftX, topLeftY) ||
+        isKey1(key1Layer, topRightX, topLeftY) ||
+        isKey1(key1Layer, topLeftX, bottomLeftY) ||
+        isKey1(key1Layer, topRightX, bottomLeftY)
+      )
+    ) {
       tiledMap.tiledMap.getLayers().remove(door1Layer);
+
     }
-    if (key2Layer != null &&
-        (isKey2(key2Layer, topLeftX, topLeftY) ||
-            isKey2(key2Layer, topRightX, topLeftY) ||
-            isKey2(key2Layer, topLeftX, bottomLeftY) ||
-            isKey2(key2Layer, topRightX, bottomLeftY))) {
+    if (
+      key2Layer != null &&
+      (
+        isKey2(key2Layer, topLeftX, topLeftY) ||
+        isKey2(key2Layer, topRightX, topLeftY) ||
+        isKey2(key2Layer, topLeftX, bottomLeftY) ||
+        isKey2(key2Layer, topRightX, bottomLeftY)
+      )
+    ) {
       tiledMap.tiledMap.getLayers().remove(door2Layer);
     }
-    if (key3Layer != null &&
-        (isKey3(key1Layer, topLeftX, topLeftY) ||
-            isKey3(key3Layer, topRightX, topLeftY) ||
-            isKey3(key3Layer, topLeftX, bottomLeftY) ||
-            isKey3(key3Layer, topRightX, bottomLeftY))) {
+    if (
+      key3Layer != null &&
+      (
+        isKey3(key3Layer, topLeftX, topLeftY) ||
+        isKey3(key3Layer, topRightX, topLeftY) ||
+        isKey3(key3Layer, topLeftX, bottomLeftY) ||
+        isKey3(key3Layer, topRightX, bottomLeftY)
+      )
+    ) {
       tiledMap.tiledMap.getLayers().remove(door3Layer);
     }
 
-    if (door1Layer != null &&
-        (isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
-            isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
-            isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
-            isWall(wallLayer, door1Layer, topRightX, bottomLeftY))) {
+    if (
+      door1Layer != null &&
+      (
+        isWall(wallLayer, door1Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door1Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door1Layer, topRightX, bottomLeftY)
+      )
+    ) {
       return false;
     }
 
-    if (door2Layer != null &&
-        (isWall(wallLayer, door2Layer, topLeftX, topLeftY) ||
-            isWall(wallLayer, door2Layer, topRightX, topLeftY) ||
-            isWall(wallLayer, door2Layer, topLeftX, bottomLeftY) ||
-            isWall(wallLayer, door2Layer, topRightX, bottomLeftY))) {
+    if (
+      door2Layer != null &&
+      (
+        isWall(wallLayer, door2Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door2Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door2Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door2Layer, topRightX, bottomLeftY)
+      )
+    ) {
       return false;
     }
 
-    if (door3Layer != null &&
-        (isWall(wallLayer, door3Layer, topLeftX, topLeftY) ||
-            isWall(wallLayer, door3Layer, topRightX, topLeftY) ||
-            isWall(wallLayer, door3Layer, topLeftX, bottomLeftY) ||
-            isWall(wallLayer, door3Layer, topRightX, bottomLeftY))) {
+    if (
+      door3Layer != null &&
+      (
+        isWall(wallLayer, door3Layer, topLeftX, topLeftY) ||
+        isWall(wallLayer, door3Layer, topRightX, topLeftY) ||
+        isWall(wallLayer, door3Layer, topLeftX, bottomLeftY) ||
+        isWall(wallLayer, door3Layer, topRightX, bottomLeftY)
+      )
+    ) {
       return false;
     }
 
-    if (japeLayer != null &&
-        (isJape(japeLayer, topLeftX, topLeftY) ||
-            isJape(japeLayer, topRightX, topLeftY) ||
-            isJape(japeLayer, topLeftX, bottomLeftY) ||
-            isJape(japeLayer, topRightX, bottomLeftY))) {
+    if(wallLayer != null && (
+      isWall(wallLayer, null, topLeftX, topLeftY) ||
+      isWall(wallLayer, null, topRightX, topLeftY) ||
+      isWall(wallLayer, null, topLeftX, bottomLeftY) ||
+      isWall(wallLayer, null, topRightX, bottomLeftY)
+    )) {
+      return false;
+    }
+
+    if (
+      endGameLayer != null &&
+      (
+        isWall(endGameLayer, endGameLayer, topLeftX, topLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, topLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topLeftX, bottomLeftY) &&
+        !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, bottomLeftY) &&
+        !fading
+      )
+    ) {
+      startFading();
+      return true;
+    }
+
+    if (
+      japeLayer != null &&
+      (
+        isJape(japeLayer, topLeftX, topLeftY) ||
+        isJape(japeLayer, topRightX, topLeftY) ||
+        isJape(japeLayer, topLeftX, bottomLeftY) ||
+        isJape(japeLayer, topRightX, bottomLeftY)
+      )
+    ) {
       game.setScreen(new WazeScreen(game, character, this));
       tiledMap.tiledMap.getLayers().remove(japeLayer);
       return false;
     }
 
-    if (isSpaceInv(spaceInvLayer, topLeftX, topLeftY) ||
-        isSpaceInv(spaceInvLayer, topRightX, topLeftY) ||
-        isSpaceInv(spaceInvLayer, topLeftX, bottomLeftY) ||
-        isSpaceInv(spaceInvLayer, topRightX, bottomLeftY)) {
+    if (
+      isSpaceInv(spaceInvLayer, topLeftX, topLeftY) ||
+      isSpaceInv(spaceInvLayer, topRightX, topLeftY) ||
+      isSpaceInv(spaceInvLayer, topLeftX, bottomLeftY) ||
+      isSpaceInv(spaceInvLayer, topRightX, bottomLeftY)
+    ) {
       SpaceInvScreen spaceInvScreen = new SpaceInvScreen(game, character, this);
       game.setScreen(spaceInvScreen);
       tiledMap.tiledMap.getLayers().remove(spaceInvLayer);
@@ -239,14 +335,15 @@ public class Epitale extends ScreenAdapter {
   }
 
   private boolean isWall(
-      TiledMapTileLayer wallLayer,
-      TiledMapTileLayer secondlayer,
-      int x,
-      int y) {
+    TiledMapTileLayer wallLayer,
+    TiledMapTileLayer secondlayer,
+    int x,
+    int y
+  ) {
     TiledMapTileLayer.Cell cell = wallLayer.getCell(x, y);
     TiledMapTileLayer.Cell cell2 = (secondlayer != null)
-        ? secondlayer.getCell(x, y)
-        : null;
+      ? secondlayer.getCell(x, y)
+      : null;
     return cell != null || cell2 != null;
   }
 
@@ -264,12 +361,13 @@ public class Epitale extends ScreenAdapter {
 
   private boolean isCharacterVisible() {
     TiledMapTileLayer layerTunnel = (TiledMapTileLayer) tiledMap.tiledMap
-        .getLayers()
-        .get("tunnels");
+      .getLayers()
+      .get("tunnels");
 
     TiledMapTileLayer.Cell cellTunnel = layerTunnel.getCell(
-        (int) (character.getX() / layerTunnel.getTileWidth()),
-        (int) (character.getY() / layerTunnel.getTileHeight()));
+      (int) (character.getX() / layerTunnel.getTileWidth()),
+      (int) (character.getY() / layerTunnel.getTileHeight())
+    );
 
     if (cellTunnel != null) {
       Object property = cellTunnel.getTile().getProperties().get("tunnel");
@@ -280,20 +378,16 @@ public class Epitale extends ScreenAdapter {
   }
 
   @Override
-  public void resize(int width, int height) {
-  }
+  public void resize(int width, int height) {}
 
   @Override
-  public void pause() {
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-  }
+  public void resume() {}
 
   @Override
-  public void hide() {
-  }
+  public void hide() {}
 
   @Override
   public void dispose() {

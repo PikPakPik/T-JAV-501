@@ -20,7 +20,6 @@ import fr.epitale.game.Main;
 import fr.epitale.game.Map.Character;
 import fr.epitale.game.Map.Epitale;
 import fr.epitale.game.Map.JAPEMap;
-import javax.swing.text.Style;
 
 public class WazeScreen implements Screen {
 
@@ -163,8 +162,8 @@ public class WazeScreen implements Screen {
         }
         font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
       }
+      batchEnd.end();
     }
-    batchEnd.end();
     batchEnd.begin();
     if (timeRemaining <= 0) {
       if (!gameOverLose) {
@@ -385,19 +384,6 @@ public class WazeScreen implements Screen {
 
   @Override
   public void dispose() {
-    // Libérez les ressources dans dispose()
-    characterTexture.dispose();
-    batch.dispose();
-    batchEnd.dispose();
-    font.dispose();
-    gameOverTexture.dispose();
-    pixmap.dispose();
-    textureRegion.getTexture().dispose();
-
-    if (shapeRenderer != null) {
-      shapeRenderer.dispose();
-      shapeRenderer = null; // Assurez-vous de définir shapeRenderer sur null après l'avoir libéré
-    }
     // Ajoutez d'autres libérations de ressources si nécessaire
     game.setScreen(epitaleScreen);
   }
