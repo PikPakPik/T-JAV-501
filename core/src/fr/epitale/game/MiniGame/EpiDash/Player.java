@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Sprite {
     private Vector2 velocity = new Vector2();
-    public int health = 3;
+    public int health = 10;
     ShapeRenderer shapeRenderer;
     private float speed = 40 * 2, gravity = 70 * 1.5f;
     private TiledMapTileLayer collisionLayer;
