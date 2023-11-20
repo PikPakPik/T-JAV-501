@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import fr.epitale.game.Map.Epitale;
 import fr.epitale.game.MiniGame.EpiDash.EpiDash;
+import fr.epitale.game.Map.Character;
 
 public class Main extends Game {
 	public static final int WIDTH = 1280;
@@ -21,13 +22,14 @@ public class Main extends Game {
 		background = new Background();
 		background.create();
 		this.setScreen(new MenuScreen(this, background));
-
 	}
+
 	public void restartGame() {
 		getScreen().dispose();
 
 		this.setScreen(new MenuScreen(this, background));
 	}
+
 	public void setPreviousScreen(Screen screen) {
 		this.previousScreen = screen;
 	}
@@ -35,6 +37,7 @@ public class Main extends Game {
 	public Screen getPreviousScreen() {
 		return previousScreen;
 	}
+
 	public void setPreviousInputProcessor(InputProcessor inputProcessor) {
 		this.previousInputProcessor = inputProcessor;
 	}
