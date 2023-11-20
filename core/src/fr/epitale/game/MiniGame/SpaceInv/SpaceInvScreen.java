@@ -15,28 +15,33 @@ import fr.epitale.game.Map.Epitale;
 
 public class SpaceInvScreen implements Screen {
     protected final Main game;
-    private final OrthographicCamera camera;
-    private final SpriteBatch batch;
-    private final Player player;
-    private final Array<Enemy> enemies;
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+    private Player player;
+    private Array<Enemy> enemies;
     private boolean moveEnemiesRight = true;
-    private final Epitale epitaleScreen;
+    private Epitale epitaleScreen;
     private boolean gameOverLose = false;
     private long gameOverStartTime;
     private com.badlogic.gdx.audio.Music spaceInvMusic;
     private com.badlogic.gdx.audio.Music gameOverMusic;
+    private Texture backgroundTexture;
+    private Texture gameOverTexture;
+
 
     public SpaceInvScreen(final Main game, Character character, Epitale epitaleScreen) {
         this.game = game;
         this.epitaleScreen = epitaleScreen;
+        initialize();
+    }
+
+    private void initialize() {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, 800, 600);
         batch = new SpriteBatch();
 
         player = new Player();
         enemies = new Array<>();
-
-
         for (int row = 0; row < Enemy.ENEMY_ROWS; row++) {
             for (int col = 0; col < Enemy.ENEMY_COLS; col++) {
                 Enemy enemy = new Enemy(col * Enemy.ENEMY_SPACING, 600 - (row * Enemy.ENEMY_SPACING));
@@ -44,7 +49,11 @@ public class SpaceInvScreen implements Screen {
             }
         }
 
+        backgroundTexture = new Texture("Tiles/tile_0049.png");
+        gameOverTexture = new Texture("gameover.jpg");
+
         spaceInvMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/SpaceInvaders/spaceinvaders.mp3"));
+        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
         spaceInvMusic.play();
     }
 
@@ -57,8 +66,6 @@ public class SpaceInvScreen implements Screen {
     public void render(float delta) {
         handleInput();
         moveEnemies();
-        Texture backgroundTexture = new Texture("Tiles/tile_0049.png");
-        Texture gameOverTexture = new Texture("gameover.jpg");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         camera.update();
@@ -165,6 +172,11 @@ public class SpaceInvScreen implements Screen {
     }
     @Override
     public void dispose() {
+        batch.dispose();
+        backgroundTexture.dispose();
+        gameOverTexture.dispose();
+        spaceInvMusic.dispose();
+        gameOverMusic.dispose();
         game.setScreen(epitaleScreen);
     }
 }

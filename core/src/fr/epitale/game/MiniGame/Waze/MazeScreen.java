@@ -24,33 +24,30 @@ import fr.epitale.game.Map.MazeMap;
 
 public class MazeScreen implements Screen {
 
+  // Variables d'état du jeu et composants
   private final Main game;
   public Character character;
-  private Texture characterTexture;
-  private SpriteBatch batch;
-  private SpriteBatch batchEnd;
-  private BitmapFont font;
-  private float timeRemaining;
-
-  private boolean gameOverLose = false;
-  private long gameOverStartTime;
   private static MazeMap japeMap;
   private final Epitale epitaleScreen;
-
-  private Texture gameOverTexture;
-  private ShapeRenderer shapeRenderer;
-  private Pixmap pixmap;
-  private TextureRegion textureRegion;
+  private float timeRemaining;
+  private boolean gameOverLose = false;
+  private long gameOverStartTime;
   private boolean hurryUp = false;
-  private Music gameOverMusic;
-  private Music mazeMusic;
-  private Timer.Task hurryUpTask = new Timer.Task() {
-    @Override
-    public void run() {
-      hurryUp = !hurryUp;
-    }
-  };
-  private Timer hurryUpTimer = new Timer();
+
+  // Ressources graphiques
+  private Texture characterTexture, gameOverTexture;
+  private SpriteBatch batch, batchEnd;
+  private BitmapFont font;
+  private ShapeRenderer shapeRenderer;
+  private TextureRegion textureRegion;
+
+  // Musique et sons
+  private Music gameOverMusic, mazeMusic;
+
+  // Gestion des effets et animations
+  private Pixmap pixmap;
+  private Timer.Task hurryUpTask;
+  private Timer hurryUpTimer;
 
   public MazeScreen(
     final Main game,
@@ -82,6 +79,14 @@ public class MazeScreen implements Screen {
     mazeMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Maze/maze.mp3"));
     mazeMusic.setLooping(true);
     mazeMusic.play();
+    hurryUpTimer = new Timer();
+    hurryUpTask =
+      new Timer.Task() {
+        @Override
+        public void run() {
+          hurryUp = !hurryUp;
+        }
+      };
   }
 
   @Override
@@ -181,7 +186,8 @@ public class MazeScreen implements Screen {
         gameOverLose = false;
       } else {
         mazeMusic.stop();
-        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
+        gameOverMusic =
+          Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
         gameOverMusic.play();
         batchEnd.draw(
           gameOverTexture,
@@ -288,7 +294,9 @@ public class MazeScreen implements Screen {
         isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
       )
     ) {
-      Music trapMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Maze/touch_trap.mp3"));
+      Music trapMusic = Gdx.audio.newMusic(
+        Gdx.files.internal("Sound/Maze/touch_trap.mp3")
+      );
       trapMusic.play();
       trapMusic.setPosition(0.5f);
       trapMusic.setVolume(1);
