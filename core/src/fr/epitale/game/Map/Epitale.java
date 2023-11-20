@@ -174,7 +174,7 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
 
     TiledMapTileLayer endGameLayer = (TiledMapTileLayer) layers.get("endGame");
-    TiledMapTileLayer epidashLayer = (TiledMapTileLayer) layers.get("epiDash");
+    TiledMapTileLayer epiDashLayer = (TiledMapTileLayer) layers.get("epiDash");
 
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
       "spaceInv"
