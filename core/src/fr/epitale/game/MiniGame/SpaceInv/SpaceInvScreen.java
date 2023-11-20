@@ -23,6 +23,8 @@ public class SpaceInvScreen implements Screen {
     private final Epitale epitaleScreen;
     private boolean gameOverLose = false;
     private long gameOverStartTime;
+    private com.badlogic.gdx.audio.Music spaceInvMusic;
+    private com.badlogic.gdx.audio.Music gameOverMusic;
 
     public SpaceInvScreen(final Main game, Character character, Epitale epitaleScreen) {
         this.game = game;
@@ -41,6 +43,9 @@ public class SpaceInvScreen implements Screen {
                 enemies.add(enemy);
             }
         }
+
+        spaceInvMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/SpaceInvaders/spaceinvaders.mp3"));
+        spaceInvMusic.play();
     }
 
     @Override
@@ -76,6 +81,7 @@ public class SpaceInvScreen implements Screen {
         checkCollisions();
 
         if (isGameOverWin()) {
+            spaceInvMusic.stop();
             game.setScreen(epitaleScreen);
             Epitale.character = new Character(28 * 16, 69 * 16);
         } else if (isGameOverLose()) {
@@ -88,6 +94,9 @@ public class SpaceInvScreen implements Screen {
                 ((Main) Gdx.app.getApplicationListener()).restartGame();
                 gameOverLose = false;
             } else {
+                spaceInvMusic.stop();
+                gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
+                gameOverMusic.play();
                 batch.draw(gameOverTexture, 0, 0, 800, 600);
             }
         }

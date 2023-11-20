@@ -2,6 +2,7 @@ package fr.epitale.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,6 +23,7 @@ public class EndScreen implements Screen {
     private Texture exitButtonHover;
     private BitmapFont font;
     private float alpha = 0.0f; // Pour l'effet de fondu
+    private Music menuMusic;
 
     public EndScreen(Main game) {
         this.game = game;
@@ -36,6 +38,7 @@ public class EndScreen implements Screen {
         final Main gameLogic = game;
         // Créer les boutons
         createButton(playButton, playButtonHover, Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() / 2, () -> {
+            menuMusic.stop();
             gameLogic.restartGame();
         }, 200, 175); 
         createButton(exitButton, exitButtonHover, Gdx.graphics.getWidth() / 2 - 50, Gdx.graphics.getHeight() / 2 - 200, () -> {
@@ -45,6 +48,9 @@ public class EndScreen implements Screen {
         font = new BitmapFont(); // Utilise une police par défaut, vous pouvez personnaliser cela
         font.setColor(Color.WHITE); // Définit la couleur du texte
         font.getData().setScale(2); // Ajuste la taille du texte
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/win.mp3"));
+        menuMusic.setLooping(true);
+        menuMusic.play();
     }
 
     private void createButton(Texture texture, Texture textureHover, int x, int y, Runnable action, int width, int height) {
