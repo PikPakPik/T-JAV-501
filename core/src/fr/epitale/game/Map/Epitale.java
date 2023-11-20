@@ -165,10 +165,7 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
     TiledMapTileLayer endGameLayer = (TiledMapTileLayer) layers.get("endGame");
     TiledMapTileLayer epidashLayer = (TiledMapTileLayer) layers.get("epiDash");
-    TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
-      "spaceInv"
-    );
-    TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
+    TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get("spaceInv");
 
     int topLeftX = (int) (newX / 16);
     int topLeftY = (int) ((newY + 14) / 16);
