@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import fr.epitale.game.Map.Epitale;
 
 public class MenuScreen implements Screen {
-    // private static final int FRAME_COLS = 5, FRAME_ROWS = 61;
     private static final int EXIT_BUTTON_WIDTH = 250;
     private static final int EXIT_BUTTON_HEIGHT = 120;
     private static final int EXIT_BUTTON_Y = 70;
@@ -75,7 +74,7 @@ public class MenuScreen implements Screen {
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                // TODO Auto-generated method stub
+                
                 myPlayBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(playButtonHover));
 
                 super.enter(event, x, y, pointer, fromActor);
@@ -83,7 +82,7 @@ public class MenuScreen implements Screen {
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                // TODO Auto-generated method stub
+                
                 myPlayBtn.getStyle().imageUp = new TextureRegionDrawable(new TextureRegion(playButton));
 
                 super.exit(event, x, y, pointer, toActor);
@@ -172,22 +171,22 @@ public class MenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
+        
     }
 
     @Override

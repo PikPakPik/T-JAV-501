@@ -63,7 +63,7 @@ public class Player extends Sprite {
 
             }
 
-            // // middle left
+            // middle left
             if (!collisionX) {
                 cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                         (int) (((getY() + getHeight()) / 2) / tilesHeight));
@@ -128,7 +128,7 @@ public class Player extends Sprite {
                 }
             }
 
-            // // middle right
+            // middle right
             if (!collisionX) {
                 cell = collisionLayer.getCell((int) ((getX() - 5 + getWidth()) / tilesWidth),
                         (int) (((getY() + getHeight()) / 2) / tilesHeight));
@@ -156,7 +156,7 @@ public class Player extends Sprite {
 
             }
 
-            // // bottom right
+            // bottom right
 
             if (!collisionX) {
                 cell = collisionLayer.getCell((int) ((getX() - 5 + getWidth()) / tilesWidth),
@@ -259,7 +259,7 @@ public class Player extends Sprite {
             }
 
         } else if (velocity.y > 0) {
-            // // Top left
+            // Top left
             Cell cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                     (int) ((getY() + getHeight()) / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {

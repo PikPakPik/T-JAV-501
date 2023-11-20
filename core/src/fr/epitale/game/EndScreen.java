@@ -76,7 +76,7 @@ public class EndScreen implements Screen {
     @Override
     public void render(float delta) {
         if (alpha < 1) {
-            alpha += delta; // Augmentez la vitesse du fondu si nécessaire
+            alpha += delta; // Augmentez la vitesse du fondu 
         }
 
         Gdx.gl.glClearColor(0, 0, 0, alpha);
@@ -90,10 +90,8 @@ public class EndScreen implements Screen {
         game.batch.end();
     }
 
-    // Implémentez les autres méthodes nécessaires (resize, pause, resume, hide, dispose)
     @Override
     public void dispose() {
-        // Disposez de vos ressources ici
         stage.dispose();
         playButton.dispose();
         exitButton.dispose();

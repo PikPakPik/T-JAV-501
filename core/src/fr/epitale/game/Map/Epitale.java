@@ -44,7 +44,6 @@ public class Epitale extends ScreenAdapter {
   public Epitale(final Main game) {
     this.game = game;
     character = new Character(34 * 16, 3 * 16);
-    // character = new Character(69 * 16, 72 * 16);
     background = new Background();
     background.create();
     epitaleMap = new EpitaleMap(character);
@@ -106,10 +105,9 @@ public class Epitale extends ScreenAdapter {
       batch.end();
       if (fading) {
         if (alpha < 1.0f) {
-          alpha += delta; // Ajustez ce facteur en fonction de la vitesse du fondu souhaitée
+          alpha += delta; 
           if (alpha > 1.0f) {
             alpha = 1.0f;
-            // Changer d'écran ici
             game.setScreen(new EndScreen(game));
           }
         }
@@ -131,7 +129,7 @@ public class Epitale extends ScreenAdapter {
   }
 
   private void handleInput() {
-     // Gestion des entrées utilisateur
+    // Gestion des entrées utilisateur
     float deltaX = 0;
     float deltaY = 0;
 

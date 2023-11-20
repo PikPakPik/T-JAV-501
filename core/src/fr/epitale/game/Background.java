@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Background implements ApplicationListener {
 
     private static final int FRAME_COLS = 5, FRAME_ROWS = 52;
-    Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
+    Animation<TextureRegion> walkAnimation;
     Texture walkSheet;
     SpriteBatch spriteBatch;
     protected boolean lastFrame = false;
@@ -63,19 +63,19 @@ public class Background implements ApplicationListener {
 
     @Override
     public void resize(int width, int height) {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'resize'");
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'pause'");
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
+        
         throw new UnsupportedOperationException("Unimplemented method 'resume'");
     }
 }
