@@ -282,7 +282,7 @@ public class Epitale extends ScreenAdapter {
         isEpiDash(epiDashLayer, topRightX, topLeftY) ||
         isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
         isEpiDash(epiDashLayer, topRightX, bottomLeftY)) {
-      music.pause();
+      music.stop();
       game.setScreen(new EpiDash(game, character, this));
       tiledMap.tiledMap.getLayers().remove(epiDashLayer);
     }
