@@ -15,7 +15,8 @@ Le but de ce projet est de créer un jeu de style 2D avec comme principal object
 
 1. Installer java 17 (https://www.oracle.com/java/technologies/downloads/#java17)
 2. Cloner le dépôt de code.
-3. Lancer le projet avec IntelliJ IDEA / VSCode / Eclipse.
+3. ```cd T-JAV-501-NAN_5/```
+4. Taper ```./gradlew desktop:run``` dans votre console
 
 ## Utilisation
 
