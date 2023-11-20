@@ -336,6 +336,7 @@ public class MazeScreen implements Screen {
     if (
       endLayerJAPE != null && isCellNotNull(endLayerJAPE, topLeftX, topLeftY)
     ) {
+      mazeMusic.stop();
       this.dispose();
     }
 
