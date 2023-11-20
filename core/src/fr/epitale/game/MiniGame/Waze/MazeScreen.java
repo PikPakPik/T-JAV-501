@@ -211,19 +211,15 @@ public class MazeScreen implements Screen {
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
       deltaX = -character.getSpeed();
-      System.out.println("LEFT");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
       deltaX = character.getSpeed();
-      System.out.println("RIGHT");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
       deltaY = character.getSpeed();
-      System.out.println("UP");
     }
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
       deltaY = -character.getSpeed();
-      System.out.println("DOWN");
     }
 
     updateCharacterPosition(deltaX, deltaY);
