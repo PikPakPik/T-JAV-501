@@ -61,7 +61,6 @@ public class MazeScreen implements Screen {
     character.setX(40 * 16);
     character.setY(2 * 16);
     timeRemaining = 300f;
-    // Initialiser la police pour afficher le temps restant
     batch = new SpriteBatch();
     batchEnd = new SpriteBatch();
     font = new BitmapFont();
@@ -112,13 +111,13 @@ public class MazeScreen implements Screen {
     shapeRenderer.setProjectionMatrix(japeMap.camera.combined);
     shapeRenderer.begin(ShapeType.Line);
 
-    Gdx.gl.glLineWidth(15f);
+    Gdx.gl.glLineWidth(20f);
 
     int initialRadius = Math.max(
       Gdx.graphics.getWidth(),
       Gdx.graphics.getHeight()
     );
-    for (int radius = initialRadius; radius > 50; radius -= 1) {
+    for (int radius = initialRadius; radius > 100; radius -= 1) {
       shapeRenderer.setColor(new Color(0, 0, 0, 0.1f));
       shapeRenderer.circle(character.getX() + 8, character.getY() + 8, radius);
     }
@@ -142,7 +141,7 @@ public class MazeScreen implements Screen {
       font.draw(batchEnd, minutes + ":" + seconds, 10, 50);
     }
     batchEnd.end();
-    font.getData().setScale(4, 4); // Augmente la taille de la police par un facteur de 2
+    font.getData().setScale(4, 4);
     if (minutes == 2 && seconds < 50) {
       font.setColor(Color.ORANGE);
     } else if (minutes == 0 && seconds < 60) {
@@ -267,7 +266,6 @@ public class MazeScreen implements Screen {
           isPressurePlate(pressureplateLayer, topRightX, bottomLeftY)
         )
       ) {
-        System.out.println("PRESSURE PLATE");
         japeMap.tiledMap.getLayers().remove(portailsLayers[i]);
       }
     }
@@ -281,8 +279,7 @@ public class MazeScreen implements Screen {
         isWall(trapsLayer, trapsLayer, topRightX, bottomLeftY)
       )
     ) {
-      System.out.println(character.getX() + " " + character.getY());
-      return resetCharacterPosition(); // Modifier ici
+      return resetCharacterPosition();
     }
 
     if (
@@ -294,7 +291,6 @@ public class MazeScreen implements Screen {
         isWall(wallLayer, portailsLayers[0], topRightX, bottomLeftY)
       )
     ) {
-      System.out.println("WALL");
       return false;
     }
 
@@ -309,7 +305,6 @@ public class MazeScreen implements Screen {
           isWall(portailsLayer, portailsLayer, topRightX, bottomLeftY)
         )
       ) {
-        System.out.println("PORTAIL");
         return false;
       }
     }
@@ -384,7 +379,6 @@ public class MazeScreen implements Screen {
 
   @Override
   public void dispose() {
-    // Ajoutez d'autres libérations de ressources si nécessaire
     game.setScreen(epitaleScreen);
   }
 }
