@@ -5,6 +5,7 @@ import java.security.Key;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -39,8 +40,10 @@ public class EpiDash implements Screen {
     String messageRestart = "";
     Texture gameBg = new Texture("Epidash_Background.jpg");
     Texture guyToTalkWith = new Texture("Tiles/tile_0097.png");
-
-    private Long gameOverStartTime;
+    private Music EpiDashMusic;
+    private Music jumpMusic;
+    private Music dieMusic;
+    private Music gameOverMusic;
     Character character;
     float time = 0;
     float speechDuration = 5f;
@@ -54,6 +57,9 @@ public class EpiDash implements Screen {
     @Override
     public void show() {
         TmxMapLoader loader = new TmxMapLoader();
+        EpiDashMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Epidash/EpidashGame.mp3"));
+        EpiDashMusic.setLooping(true);
+        EpiDashMusic.play();
         map = loader.load("EpitechDash2.tmx");
         batch = new SpriteBatch();
         healthFont = new BitmapFont();
@@ -74,6 +80,7 @@ public class EpiDash implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+
         batch.draw(gameBg, 0, 0, Gdx.graphics.getWidth(),
                 Gdx.graphics.getHeight());
         batch.end();
@@ -91,12 +98,14 @@ public class EpiDash implements Screen {
 
             if (player.health > 0 && player.die) {
                 player.health--;
+                dieMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Epidash/HitTheWall.mp3"));
+                dieMusic.play();
                 player.die = false;
                 player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
             }
 
             if (isGameOverWin()) {
-
+                EpiDashMusic.stop();
                 game.setScreen(epitaleScreen);
             }
         }
@@ -112,6 +121,8 @@ public class EpiDash implements Screen {
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && player.isGrounded() && !player.die && !player.pause
                 && player.health > 0 && !player.talkToGuy) {
+            jumpMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Epidash/Jump.mp3"));
+            jumpMusic.play();
             player.jump();
 
         }
@@ -158,6 +169,9 @@ public class EpiDash implements Screen {
             player.setPosition(11 * 16, 9 * player.getCollisionLayer().getHeight());
         }
         if (player.health == 0) {
+            EpiDashMusic.stop();
+            gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
+            gameOverMusic.play();
 
             if (time > 5) {
                 time = 0f;

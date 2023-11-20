@@ -181,7 +181,7 @@ public class MazeScreen implements Screen {
         gameOverLose = false;
       } else {
         mazeMusic.stop();
-        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/lose.mp3"));
+        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/loosemusic.mp3"));
         gameOverMusic.play();
         batchEnd.draw(
           gameOverTexture,
