@@ -191,7 +191,7 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door1Layer);
-      return false;
+
     }
     if (
       key2Layer != null &&
@@ -203,7 +203,6 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door2Layer);
-      return false;
     }
     if (
       key3Layer != null &&
@@ -215,7 +214,6 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door3Layer);
-      return false;
     }
 
     if (
