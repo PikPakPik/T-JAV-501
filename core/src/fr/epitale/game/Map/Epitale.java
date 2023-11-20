@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import fr.epitale.game.Background;
 import fr.epitale.game.Main;
+import fr.epitale.game.MiniGame.EpiDash.EpiDash;
 import fr.epitale.game.MiniGame.SpaceInv.SpaceInvScreen;
 import fr.epitale.game.MiniGame.Waze.WazeScreen;
 import fr.epitale.game.PauseMenuScreen;
@@ -29,6 +30,7 @@ public class Epitale extends ScreenAdapter {
   public Epitale(final Main game) {
     this.game = game;
     character = new Character(34 * 16, 3 * 16);
+    // character = new Character(69 * 16, 72 * 16);
     background = new Background();
     background.create();
     epitaleMap = new EpitaleMap(character);
@@ -134,7 +136,7 @@ public class Epitale extends ScreenAdapter {
     TiledMapTileLayer key2Layer = (TiledMapTileLayer) layers.get("key02");
     TiledMapTileLayer key3Layer = (TiledMapTileLayer) layers.get("key03");
     TiledMapTileLayer japeLayer = (TiledMapTileLayer) layers.get("JAPE");
-    TiledMapTileLayer epidashLayer = (TiledMapTileLayer) layers.get("epiDash");
+    TiledMapTileLayer epiDashLayer = (TiledMapTileLayer) layers.get("epiDash");
     TiledMapTileLayer spaceInvLayer = (TiledMapTileLayer) layers.get(
         "spaceInv");
     TiledMapTileLayer endLayerJAPE = (TiledMapTileLayer) layers.get("end");
@@ -209,15 +211,13 @@ public class Epitale extends ScreenAdapter {
       tiledMap.tiledMap.getLayers().remove(spaceInvLayer);
     }
 
-    // if (
-    // isEpiDash(epiDashLayer, topLeftX, topLeftY) ||
-    // isEpiDash(epiDashLayer, topRightX, topLeftY) ||
-    // isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
-    // isEpiDash(epiDashLayer, topRightX, bottomLeftY)
-    // ) {
-    // //game.setScreen(new EpiDash(game, character, this));
-    // tiledMap.tiledMap.getLayers().remove(epiDashLayer);
-    // }
+    if (isEpiDash(epiDashLayer, topLeftX, topLeftY) ||
+        isEpiDash(epiDashLayer, topRightX, topLeftY) ||
+        isEpiDash(epiDashLayer, topLeftX, bottomLeftY) ||
+        isEpiDash(epiDashLayer, topRightX, bottomLeftY)) {
+      game.setScreen(new EpiDash(game, character, this));
+      tiledMap.tiledMap.getLayers().remove(epiDashLayer);
+    }
     return true;
   }
 

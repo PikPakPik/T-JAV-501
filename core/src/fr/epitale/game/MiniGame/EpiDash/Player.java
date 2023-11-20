@@ -15,7 +15,7 @@ public class Player extends Sprite {
     ShapeRenderer shapeRenderer;
     private float speed = 40 * 2, gravity = 70 * 1.5f;
     private TiledMapTileLayer collisionLayer;
-    public boolean die = false, win = false, pause = false;
+    public boolean die = false, win = false, pause = false, talkToGuy = false;
 
     public Player(Sprite sprite, TiledMapTileLayer collisionLayer) {
         super(sprite);
@@ -45,6 +45,12 @@ public class Player extends Sprite {
                 win = cell.getTile().getProperties().containsKey("door");
                 collisionX = cell.getTile().getProperties().containsKey("wall");
                 if (win) {
+                    pause = true;
+                    return;
+                }
+                talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                if (talkToGuy) {
+                    pause = true;
                     return;
                 }
                 if (collisionX) {
@@ -84,6 +90,11 @@ public class Player extends Sprite {
                         pause = true;
                         return;
                     }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+                        return;
+                    }
                     collisionX = cell.getTile().getProperties().containsKey("damage");
                     if (collisionX) {
                         die = true;
@@ -100,6 +111,12 @@ public class Player extends Sprite {
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                 win = cell.getTile().getProperties().containsKey("door");
                 if (win) {
+                    pause = true;
+                    return;
+                }
+                talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                if (talkToGuy) {
+                    pause = true;
                     return;
                 }
                 collisionX = cell.getTile().getProperties().containsKey("wall");
@@ -120,6 +137,12 @@ public class Player extends Sprite {
                     win = cell.getTile().getProperties().containsKey("door");
                     if (win) {
                         pause = true;
+                        return;
+                    }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
                         return;
                     }
                     collisionX = cell.getTile().getProperties().containsKey("wall");
@@ -145,6 +168,12 @@ public class Player extends Sprite {
                         pause = true;
                         return;
                     }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
+                        return;
+                    }
                     collisionX = cell.getTile().getProperties().containsKey("damage");
                     if (collisionX) {
                         die = true;
@@ -167,6 +196,12 @@ public class Player extends Sprite {
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                 win = cell.getTile().getProperties().containsKey("door");
                 if (win) {
+                    pause = true;
+                    return;
+                }
+                talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                if (talkToGuy) {
+                    pause = true;
                     return;
                 }
                 collisionY = cell.getTile().getProperties().containsKey("damage");
@@ -187,6 +222,12 @@ public class Player extends Sprite {
                         pause = true;
                         return;
                     }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("damage");
                     if (collisionY) {
                         die = true;
@@ -204,6 +245,12 @@ public class Player extends Sprite {
                         pause = true;
                         return;
                     }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("damage");
                     if (collisionY) {
                         die = true;
@@ -219,6 +266,12 @@ public class Player extends Sprite {
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                 win = cell.getTile().getProperties().containsKey("door");
                 if (win) {
+                    pause = true;
+                    return;
+                }
+                talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                if (talkToGuy) {
+                    pause = true;
                     return;
                 }
                 collisionY = cell.getTile().getProperties().containsKey("wall");
@@ -240,6 +293,12 @@ public class Player extends Sprite {
                         pause = true;
                         return;
                     }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("wall");
                     if (collisionY) {
                         die = true;
@@ -258,6 +317,12 @@ public class Player extends Sprite {
                     win = cell.getTile().getProperties().containsKey("door");
                     if (win) {
                         pause = true;
+                        return;
+                    }
+                    talkToGuy = cell.getTile().getProperties().containsKey("guyToRestart");
+                    if (talkToGuy) {
+                        pause = true;
+
                         return;
                     }
                     collisionY = cell.getTile().getProperties().containsKey("wall");
