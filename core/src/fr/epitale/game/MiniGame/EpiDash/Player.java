@@ -11,12 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends Sprite {
     private Vector2 velocity = new Vector2();
+    public int health = 3;
     ShapeRenderer shapeRenderer;
     private float speed = 40 * 2, gravity = 70 * 1.5f;
     private TiledMapTileLayer collisionLayer;
-    public boolean die = false,win=false,pause=false;
-    
-
+    public boolean die = false, win = false, pause = false;
 
     public Player(Sprite sprite, TiledMapTileLayer collisionLayer) {
         super(sprite);
@@ -43,7 +42,11 @@ public class Player extends Sprite {
             Cell cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                     (int) ((getY() + getHeight()) / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                win = cell.getTile().getProperties().containsKey("door");
                 collisionX = cell.getTile().getProperties().containsKey("wall");
+                if (win) {
+                    return;
+                }
                 if (collisionX) {
                     die = true;
                 }
@@ -60,6 +63,7 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                         (int) (((getY() + getHeight()) / 2) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
                     collisionX = cell.getTile().getProperties().containsKey("wall");
                     if (collisionX) {
                         die = true;
@@ -75,6 +79,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                         (int) ((getY()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionX = cell.getTile().getProperties().containsKey("damage");
                     if (collisionX) {
                         die = true;
@@ -89,6 +98,10 @@ public class Player extends Sprite {
             Cell cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
                     (int) ((getY() + getHeight()) / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                win = cell.getTile().getProperties().containsKey("door");
+                if (win) {
+                    return;
+                }
                 collisionX = cell.getTile().getProperties().containsKey("wall");
                 if (collisionX) {
                     die = true;
@@ -104,6 +117,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
                         (int) (((getY() + getHeight()) / 2) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionX = cell.getTile().getProperties().containsKey("wall");
                     if (collisionX) {
                         die = true;
@@ -122,6 +140,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
                         (int) ((getY()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionX = cell.getTile().getProperties().containsKey("damage");
                     if (collisionX) {
                         die = true;
@@ -142,6 +165,10 @@ public class Player extends Sprite {
             // bottom left
             Cell cell = collisionLayer.getCell((int) (getX() / tilesWidth), (int) (getY() / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                win = cell.getTile().getProperties().containsKey("door");
+                if (win) {
+                    return;
+                }
                 collisionY = cell.getTile().getProperties().containsKey("damage");
                 if (collisionY) {
                     die = true;
@@ -155,6 +182,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tilesWidth),
                         (int) ((getY()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("damage");
                     if (collisionY) {
                         die = true;
@@ -167,6 +199,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
                         (int) ((getY()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("damage");
                     if (collisionY) {
                         die = true;
@@ -180,6 +217,10 @@ public class Player extends Sprite {
             Cell cell = collisionLayer.getCell((int) (getX() / tilesWidth),
                     (int) ((getY() + getHeight()) / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                win = cell.getTile().getProperties().containsKey("door");
+                if (win) {
+                    return;
+                }
                 collisionY = cell.getTile().getProperties().containsKey("wall");
                 if (collisionY) {
                     die = true;
@@ -194,6 +235,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tilesWidth),
                         (int) ((getY() + getHeight()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("wall");
                     if (collisionY) {
                         die = true;
@@ -209,6 +255,11 @@ public class Player extends Sprite {
                 cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
                         (int) ((getY() + getHeight()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
+                    win = cell.getTile().getProperties().containsKey("door");
+                    if (win) {
+                        pause = true;
+                        return;
+                    }
                     collisionY = cell.getTile().getProperties().containsKey("wall");
                     if (collisionY) {
                         die = true;
@@ -227,12 +278,12 @@ public class Player extends Sprite {
         }
 
     }
-    public void stopMoving(){
+
+    public void stopMoving() {
         velocity.x = 0;
         velocity.y = 0;
         pause = true;
     }
-    
 
     @Override
     public void draw(Batch spriteBatch) {
