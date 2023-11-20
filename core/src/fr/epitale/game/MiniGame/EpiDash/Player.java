@@ -106,7 +106,7 @@ public class Player extends Sprite {
 
         } else if (velocity.x > 0) {
             // Top right
-            Cell cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
+            Cell cell = collisionLayer.getCell((int) ((getX()-5 + getWidth()) / tilesWidth),
                     (int) ((getY() + getHeight()) / tilesHeight));
             if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                 win = cell.getTile().getProperties().containsKey("door");
@@ -131,7 +131,7 @@ public class Player extends Sprite {
 
             // // middle right
             if (!collisionX) {
-                cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
+                cell = collisionLayer.getCell((int) ((getX()-5 + getWidth()) / tilesWidth),
                         (int) (((getY() + getHeight()) / 2) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                     win = cell.getTile().getProperties().containsKey("door");
@@ -160,7 +160,7 @@ public class Player extends Sprite {
             // // bottom right
 
             if (!collisionX) {
-                cell = collisionLayer.getCell((int) ((getX() + getWidth()) / tilesWidth),
+                cell = collisionLayer.getCell((int) ((getX() -5 + getWidth()) / tilesWidth),
                         (int) ((getY()) / tilesHeight));
                 if (cell != null && cell.getTile() != null && cell.getTile().getProperties() != null) {
                     win = cell.getTile().getProperties().containsKey("door");
