@@ -54,6 +54,7 @@ public class Epitale extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
+    tiledMap.character = character;
     if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
       isPaused = !isPaused;
 
@@ -182,6 +183,7 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door1Layer);
+      return false;
     }
     if (
       key2Layer != null &&
@@ -193,6 +195,7 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door2Layer);
+      return false;
     }
     if (
       key3Layer != null &&
@@ -204,6 +207,7 @@ public class Epitale extends ScreenAdapter {
       )
     ) {
       tiledMap.tiledMap.getLayers().remove(door3Layer);
+      return false;
     }
 
     if (
@@ -245,10 +249,10 @@ public class Epitale extends ScreenAdapter {
     if (
       endGameLayer != null &&
       (
-        isWall(wallLayer, endGameLayer, topLeftX, topLeftY) ||
-        isWall(wallLayer, endGameLayer, topRightX, topLeftY) ||
-        isWall(wallLayer, endGameLayer, topLeftX, bottomLeftY) ||
-        isWall(wallLayer, endGameLayer, topRightX, bottomLeftY) && fading == false
+        isWall(endGameLayer, endGameLayer, topLeftX, topLeftY) && !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, topLeftY) && !fading ||
+        isWall(endGameLayer, endGameLayer, topLeftX, bottomLeftY) && !fading ||
+        isWall(endGameLayer, endGameLayer, topRightX, bottomLeftY) && !fading
       )
     ) {
       startFading();
